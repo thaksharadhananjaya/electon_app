@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Repo {
-  static Future<List> getState() async {
+/*   static Future<List> getState() async {
     var response =
         await http.get(Uri.parse("${API_END_POINT}getState?key=$ACCESS_KEY"));
         
@@ -46,7 +46,7 @@ class Repo {
     }
     return listWard;
   }
-
+ */
   static Future<void> addData(
       {String state,
       String lga,

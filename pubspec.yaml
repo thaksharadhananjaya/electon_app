@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   image_picker: ^0.8.5+2
   path_provider: ^2.0.10
+  permission_handler: ^10.0.0
   geolocator: ^8.2.1
   video_player: ^2.4.2
   another_flushbar: ^1.10.29
@@ -47,9 +48,11 @@ dependencies:
   amplify_core: ^0.6.3
   amplify_auth_cognito: ^0.6.3
   amplify_storage_s3: ^0.6.3
-  video_compress: ^3.1.1
+  video_compress: ^3.1.0
   amplify_authenticator: ^0.2.2
   amplify_datastore: ^0.6.4
+  sqflite: ^2.0.3
+  
  
 
 dev_dependencies:

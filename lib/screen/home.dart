@@ -9,12 +9,14 @@ import 'package:custom_floating_action_button/custom_floating_action_button.dart
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:election_app/compononts/button.dart';
 import 'package:election_app/compononts/custom_dropdown.dart';
+import 'package:election_app/db/db_helper.dart';
 import 'package:election_app/repo/repo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:election_app/screen/player.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sn_progress_dialog/completed.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 import 'package:video_compress/video_compress.dart';
@@ -32,6 +34,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   VideoPlayerController controller;
   TextEditingController textNoteController = TextEditingController();
+  DBHelper dbHelper = DBHelper();
   Position position;
 
   File photo;
@@ -47,6 +50,7 @@ class _HomeState extends State<Home> {
       controller.setVolume(0.0);
       controller.pause();
     }
+    
     super.deactivate();
   }
 
@@ -58,7 +62,11 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    
     getState();
+    dbHelper.saveData();
+    
+    dbHelper.getPol('state', 'lga', 1);
     //configureAmplify();
     super.initState();
   }
@@ -77,18 +85,19 @@ class _HomeState extends State<Home> {
   } */
 
   Future<void> getState() async {
-    state = await Repo.getState();
+    if (await Permission.storage.request().isGranted) {
+    state = await dbHelper.getState();}
   }
 
   Future<void> getLGA() async {
-    lga = await Repo.getLGA(stateVal);
+    lga = await dbHelper.getLGA(stateVal);
     ward = [null, null];
     pucode = null;
     setState(() {});
   }
 
   Future<void> getWard() async {
-    ward = await Repo.getWard(stateVal, lgaVal);
+    ward = await dbHelper.getWard(stateVal, lgaVal);
     pucode = null;
     setState(() {});
   }
@@ -96,7 +105,8 @@ class _HomeState extends State<Home> {
   Future<void> getPol() async {
     int index = ward[1].indexOf(wardVal);
 
-    pucode = await Repo.getPol(stateVal, lgaVal, ward[0][index]);
+    pucode = await dbHelper.getPol(stateVal, lgaVal, ward[0][index]);
+    print(pucode);
     setState(() {});
   }
 
@@ -343,15 +353,19 @@ class _HomeState extends State<Home> {
     );
     if (pikedVideo != null && mounted) {
       await VideoCompress.setLogLevel(0);
-      final info = await VideoCompress.compressVideo(
+      final MediaInfo info = await VideoCompress.compressVideo(
         pikedVideo.path,
         quality: VideoQuality.MediumQuality,
-        deleteOrigin: true,
+        deleteOrigin: false,
         includeAudio: true,
       );
+
       photo = null;
-      isPhoto = false;
-      video = File(info.path);
+      if (info == null) {
+        video = File(pikedVideo.path);
+      } else {
+        video = File(info.path);
+      }
       await playVideo();
     }
   }
@@ -468,8 +482,6 @@ class _HomeState extends State<Home> {
             pd.update(value: val.toInt());
           });
 
-      
-
       Repo.addData(
           state: stateVal,
           lga: lgaVal,
@@ -489,7 +501,7 @@ class _HomeState extends State<Home> {
           print("error $e");
         }
       }
-       setState(() {
+      setState(() {
         // controller.dispose();
         //controller = null;
         photo = null;
@@ -505,7 +517,7 @@ class _HomeState extends State<Home> {
         lgaVal = null;
         pucode = null;
         textNoteController.clear();
-      }); 
+      });
     } on StorageException catch (e) {
       Flushbar(
         message: e.message,
@@ -518,5 +530,4 @@ class _HomeState extends State<Home> {
       ).show(context);
     }
   }
-
 }
