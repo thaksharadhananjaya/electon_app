@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
     "auth": {
-        "electionmobi4721ec07": {
+        "electionapp87f36d1b": {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string",
             "UserPoolId": "string",
@@ -11,7 +11,7 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "storage": {
-        "uploadFiles": {
+        "electionuploads": {
             "BucketName": "string",
             "Region": "string"
         }

@@ -1,15 +1,13 @@
 {
   "auth": {
-    "electionmobi4721ec07": {
+    "electionapp87f36d1b": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false,
       "frontendAuthConfig": {
         "socialProviders": [],
-        "usernameAttributes": [
-          "EMAIL"
-        ],
+        "usernameAttributes": [],
         "signupAttributes": [
           "EMAIL"
         ],
@@ -28,28 +26,10 @@
     }
   },
   "storage": {
-    "uploadFiles": {
+    "electionuploads": {
       "service": "S3",
       "providerPlugin": "awscloudformation",
       "dependsOn": []
-    }
-  },
-  "api": {
-    "electionmobi": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "output": {
-        "authConfig": {
-          "defaultAuthentication": {
-            "authenticationType": "API_KEY",
-            "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
-            }
-          },
-          "additionalAuthenticationProviders": []
-        }
-      }
     }
   }
 }

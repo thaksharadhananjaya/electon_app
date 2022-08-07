@@ -1,19 +1,19 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-electionmobi-dev-152733-authRole",
-      "UnauthRoleArn": "arn:aws:iam::636638715614:role/amplify-electionmobi-dev-152733-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::636638715614:role/amplify-electionmobi-dev-152733-authRole",
+      "AuthRoleName": "amplify-electionapp-dev-104030-authRole",
+      "UnauthRoleArn": "arn:aws:iam::845325376577:role/amplify-electionapp-dev-104030-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::845325376577:role/amplify-electionapp-dev-104030-authRole",
       "Region": "eu-west-1",
-      "DeploymentBucketName": "amplify-electionmobi-dev-152733-deployment",
-      "UnauthRoleName": "amplify-electionmobi-dev-152733-unauthRole",
-      "StackName": "amplify-electionmobi-dev-152733",
-      "StackId": "arn:aws:cloudformation:eu-west-1:636638715614:stack/amplify-electionmobi-dev-152733/0c6eacc0-0b37-11ed-9209-0ad2f1df17d9",
-      "AmplifyAppId": "dmi0ba2mgu3dx"
+      "DeploymentBucketName": "amplify-electionapp-dev-104030-deployment",
+      "UnauthRoleName": "amplify-electionapp-dev-104030-unauthRole",
+      "StackName": "amplify-electionapp-dev-104030",
+      "StackId": "arn:aws:cloudformation:eu-west-1:845325376577:stack/amplify-electionapp-dev-104030/45604150-160f-11ed-8883-0ac5d0e994ef",
+      "AmplifyAppId": "d3tnsqamwxhcqn"
     },
     "categories": {
       "auth": {
-        "electionmobi4721ec07": {},
+        "electionapp87f36d1b": {},
         "true": {}
       }
     }
