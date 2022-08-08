@@ -5,7 +5,6 @@ import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:custom_floating_action_button/custom_floating_action_button.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:election_app/compononts/button.dart';
 import 'package:election_app/compononts/custom_dropdown.dart';
@@ -16,9 +15,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:election_app/screen/player.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:move_to_background/move_to_background.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sn_progress_dialog/completed.dart';
-import 'package:sn_progress_dialog/progress_dialog.dart';
+
 import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
@@ -50,7 +49,7 @@ class _HomeState extends State<Home> {
       controller.setVolume(0.0);
       controller.pause();
     }
-    
+
     super.deactivate();
   }
 
@@ -62,11 +61,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    
     getState();
-    dbHelper.saveData();
-    
-    dbHelper.getPol('state', 'lga', 1);
+
     //configureAmplify();
     super.initState();
   }
@@ -86,7 +82,9 @@ class _HomeState extends State<Home> {
 
   Future<void> getState() async {
     if (await Permission.storage.request().isGranted) {
-    state = await dbHelper.getState();}
+      await dbHelper.saveData();
+      state = await dbHelper.getState();
+    }
   }
 
   Future<void> getLGA() async {
@@ -106,16 +104,37 @@ class _HomeState extends State<Home> {
     int index = ward[1].indexOf(wardVal);
 
     pucode = await dbHelper.getPol(stateVal, lgaVal, ward[0][index]);
-    print(pucode);
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height * 0.35;
-    return CustomFloatingActionButton(
-      body: Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        {
+          MoveToBackground.moveTaskToBack();
+          return false;
+        }
+      },
+      child: Scaffold(
         // drawer: buildDrawer(),
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton(
+              onPressed: () => determinePosition(false),
+              child: const Icon(Icons.video_camera_back),
+            ),
+            const SizedBox(
+              height: 6,
+            ),
+            FloatingActionButton(
+              onPressed: () => determinePosition(true),
+              child: const Icon(Icons.camera_enhance),
+            ),
+          ],
+        ),
         appBar: AppBar(),
         body: Container(
             padding: const EdgeInsets.all(10.0),
@@ -137,14 +156,18 @@ class _HomeState extends State<Home> {
                             : Container(
                                 margin: const EdgeInsets.only(bottom: 40),
                                 height: height,
-                                child: Image.file(photo)),
+                                width: double.maxFinite,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: FileImage(photo),
+                                        fit: BoxFit.fill)),
+                              ),
                         CustomDropDown(
                             label: "State",
                             autoComplete: EasyAutocomplete(
                                 decoration: buildTextDecoration(),
                                 suggestions: state ?? [],
-                                onChanged: (value) =>
-                                    print('onChanged value: $value'),
+                                onChanged: (value) {},
                                 onSubmitted: (value) {
                                   stateVal = value;
                                   getLGA();
@@ -154,8 +177,7 @@ class _HomeState extends State<Home> {
                             autoComplete: EasyAutocomplete(
                                 decoration: buildTextDecoration(),
                                 suggestions: lga ?? [],
-                                onChanged: (value) =>
-                                    print('onChanged value: $value'),
+                                onChanged: (value) {},
                                 onSubmitted: (value) {
                                   lgaVal = value;
                                   getWard();
@@ -165,20 +187,19 @@ class _HomeState extends State<Home> {
                             autoComplete: EasyAutocomplete(
                                 decoration: buildTextDecoration(),
                                 suggestions: ward[1] ?? [],
-                                onChanged: (value) {
+                                onChanged: (value) {},
+                                onSubmitted: (value) {
                                   wardVal = value;
                                   getPol();
-                                },
-                                onSubmitted: (value) =>
-                                    print('onSubmitted value: $value'))),
+                                })),
                         CustomDropDown(
-                            label: "Poling Unit Code",
+                            label: "Poling Unit Name",
                             autoComplete: EasyAutocomplete(
-                                decoration: buildTextDecoration(),
-                                suggestions: pucode ?? [],
-                                onChanged: (value) => pucodeVal = value,
-                                onSubmitted: (value) =>
-                                    print('onSubmitted value: $value'))),
+                              decoration: buildTextDecoration(),
+                              suggestions: pucode ?? [],
+                              onChanged: (value) {},
+                              onSubmitted: (value) => pucodeVal = value,
+                            )),
                         buildNoteTextField(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -206,31 +227,6 @@ class _HomeState extends State<Home> {
                     ),
                   )),
       ),
-      options: [
-        InkWell(
-          onTap: () async {
-            await determinePosition(false);
-            Navigator.pop(context);
-          },
-          child: const CircleAvatar(
-            child: Icon(Icons.video_camera_back),
-          ),
-        ),
-        InkWell(
-          onTap: () async {
-            await determinePosition(true);
-            //Navigator.pop(context);
-          },
-          child: const CircleAvatar(
-            child: Icon(Icons.camera_enhance),
-          ),
-        ),
-      ],
-      type: CustomFloatingActionButtonType.verticalUp,
-      openFloatingActionButton: const Icon(Icons.add),
-      closeFloatingActionButton: const Icon(Icons.close),
-      spaceFromBottom: 32,
-      spaceFromRight: 24,
     );
   }
 
@@ -471,28 +467,26 @@ class _HomeState extends State<Home> {
     S3UploadFileOptions options =
         S3UploadFileOptions(accessLevel: StorageAccessLevel.guest);
     try {
-      ProgressDialog pd = ProgressDialog(context: context);
-      pd.show(max: 100, msg: 'File Uploading...', completed: Completed());
-      UploadFileResult result = await Amplify.Storage.uploadFile(
-          key: key,
-          local: file,
-          options: options,
-          onProgress: (progress) {
-            double val = 100 * progress.getFractionCompleted();
-            pd.update(value: val.toInt());
-          });
-
-      Repo.addData(
+      /*  ProgressDialog pd = ProgressDialog(context: context);
+      pd.show(max: 100, msg: 'File Uploading...', completed: Completed()); */
+      dbHelper.saveDataOffline(
           state: stateVal,
           lga: lgaVal,
           ward: wardVal,
           pu: pucodeVal,
           remark: textNoteController.text,
-          file: result.key,
+          file: key,
           type: type,
           lat: position.latitude,
-          long: position.longitude,
-          context: context);
+          long: position.longitude);
+      uploadTextData();
+      clear();
+      await Amplify.Storage.uploadFile(
+        key: key,
+        local: file,
+        options: options,
+      );
+
       try {
         controller.dispose();
         controller = null;
@@ -501,23 +495,6 @@ class _HomeState extends State<Home> {
           print("error $e");
         }
       }
-      setState(() {
-        // controller.dispose();
-        //controller = null;
-        photo = null;
-        /* lga.clear();
-        ward.clear();
-        pucode.clear(); */
-        lga = null;
-        ward = [null, null];
-        pucode = null;
-        video = null;
-        stateVal = null;
-        wardVal = null;
-        lgaVal = null;
-        pucode = null;
-        textNoteController.clear();
-      });
     } on StorageException catch (e) {
       Flushbar(
         message: e.message,
@@ -529,5 +506,57 @@ class _HomeState extends State<Home> {
         ),
       ).show(context);
     }
+  }
+
+  Future<void> uploadTextData() async {
+    var data = await dbHelper.getDataOffline();
+    try {
+      await InternetAddress.lookup('google.com');
+      for (var row in data) {
+        Repo.addData(
+            state: row['state'],
+            lga: row['lga'],
+            ward: row['ward'],
+            pu: row['pu'],
+            remark: row['remark'],
+            file: row['file'],
+            type: row['file_type'],
+            lat: row['lat'],
+            long: row['long'],
+            context: context);
+      }
+      dbHelper.deleteDataOffline();
+    } catch (e) {
+      uploadTextData();
+    }
+  }
+
+  void clear() {
+    Flushbar(
+      message: "Data sumited !",
+      messageColor: Colors.green,
+      duration: const Duration(seconds: 3),
+      icon: const Icon(
+        Icons.warning_rounded,
+        color: Colors.green,
+      ),
+    ).show(context);
+    setState(() {
+      // controller.dispose();
+      //controller = null;
+      photo = null;
+      /* lga.clear();
+      ward.clear();
+      pucode.clear(); */
+      lga = null;
+      ward = [null, null];
+      pucode = null;
+      video = null;
+      stateVal = null;
+      wardVal = null;
+      lgaVal = null;
+      pucode = null;
+      textNoteController.clear();
+    });
   }
 }

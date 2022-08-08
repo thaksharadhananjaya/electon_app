@@ -53,7 +53,7 @@ class Repo {
       String ward,
       String pu,
       String file,
-      int type,
+      String type,
       String remark,
       double lat,
       double long,

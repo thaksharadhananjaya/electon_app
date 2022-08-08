@@ -44,6 +44,7 @@ dependencies:
   sn_progress_dialog: ^1.0.7
   easy_autocomplete: ^1.5.0
   http: ^0.13.4
+  move_to_background: ^1.0.2
   amplify_flutter: ^0.6.3
   amplify_core: ^0.6.3
   amplify_auth_cognito: ^0.6.3
