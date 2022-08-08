@@ -46,13 +46,7 @@ class DBHelper {
   Future saveData() async {
     var dbClient = await db;
 
-    try {
-      await dbClient.transaction((txn) async {
-        return await txn.rawQuery(POL_DATA);
-      });
-    } catch (e) {
-      print(e);
-    }
+    await addPolData(dbClient);
 
     try {
       await dbClient.transaction((txn) async {
@@ -79,6 +73,19 @@ class DBHelper {
       });
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> addPolData(Database dbClient) async {
+    for (int i = 0; i < 186; i++) {
+      try {
+        await dbClient.transaction((txn) async {
+          // print(i);
+          return await txn.rawInsert(POL_DATA[i]);
+        });
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
@@ -110,8 +117,6 @@ class DBHelper {
                 )
                 VALUES('$state', '$lga', '$ward', '$pu', '$remark', '$file', '$type', '$lat', '$long')""");
       });
-      
-      
     } catch (e) {
       print(e);
     }
@@ -202,6 +207,18 @@ class DBHelper {
         listData.add(row['pu_name']);
       }
       return listData;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future getCo() async {
+    var dbClient = await db;
+    try {
+      var data =
+          await dbClient.rawQuery("SELECT count(*) FROM polling_unit");
+      print("ff: $data");
+      return data;
     } catch (e) {
       print(e);
     }

@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     getState();
-
+dbHelper.getCo();
     //configureAmplify();
     super.initState();
   }
