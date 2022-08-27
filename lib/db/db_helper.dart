@@ -217,7 +217,7 @@ class DBHelper {
     try {
       var data =
           await dbClient.rawQuery("SELECT count(*) FROM polling_unit");
-      print("ff: $data");
+    
       return data;
     } catch (e) {
       print(e);
