@@ -44,7 +44,7 @@ class _MediaDataState extends State<MediaData> {
                           color: const Color.fromARGB(77, 228, 224, 224),
                           border: Border.all(color: Colors.grey),
                           borderRadius: BorderRadius.circular(8)),
-                      child:  Icon(
+                      child: Icon(
                         Icons.camera_alt,
                         size: 140,
                         color: Colors.blue[200],
@@ -63,19 +63,19 @@ class _MediaDataState extends State<MediaData> {
 
   Future<dynamic> showBottomSheet(BuildContext context) {
     return showMaterialModalBottomSheet(
-                    context: context,
-                    builder: (context) => SizedBox(
-                      height: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          bottomButton('Photo', Icons.photo, () {}),
-                          bottomButton('Video', Icons.video_camera_back_sharp,() {}),
-                        ],
-                      ),
-                    ),
-                  );
+      context: context,
+      builder: (context) => SizedBox(
+        height: 100,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            bottomButton('Photo', Icons.photo, pickPhoto),
+            bottomButton('Video', Icons.video_camera_back_sharp, pickVideo),
+          ],
+        ),
+      ),
+    );
   }
 
   InkWell bottomButton(String label, IconData iconData, Function onClick) {
