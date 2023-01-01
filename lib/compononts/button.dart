@@ -1,39 +1,37 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-
+import '../config.dart';
 
 class CustomButton extends StatelessWidget {
-   Color color;
-  final Function function;
   final String label;
-  CustomButton({Key key, this.color=Colors.blue, this.function, this.label}) : super(key: key);
+  final Function onPress;
+  double elevation;
+  CustomButton(
+      {Key key,
+ 
+      this.elevation=1,
+      @required this.label,
+      @required this.onPress})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 140,
-      height: 50,
-      decoration: BoxDecoration(
-          color: color,
-          boxShadow: [
-            BoxShadow(
-              offset: const Offset(0, 10),
-              blurRadius: 25,
-              color: color.withOpacity(0.20),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(12.0)),
-      margin: const EdgeInsets.only(top: 40, bottom: 120),
-      child: MaterialButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          onPressed: function,
-          child:  Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 20),
-          )),
+    double screenwidth = MediaQuery.of(context).size.width;
+    return MaterialButton(
+      height: 60,
+      minWidth: screenwidth*0.8,
+      elevation: elevation,
+      color: kPrimeryColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      onPressed: ()=> onPress(),
+      child: Text(
+        label,
+        style: GoogleFonts.montserrat(
+          textStyle: const TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+      ),
     );
   }
 }

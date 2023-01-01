@@ -3,7 +3,8 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:election_app/screen/home.dart';
+import 'package:election_app/screen/media_data.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'amplifyconfiguration.dart';
 import 'config.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     try {
       await Amplify.addPlugin(AmplifyAuthCognito());
       Amplify.addPlugin(AmplifyStorageS3());
-      
+
       await Amplify.configure(amplifyconfig);
       print('Successfully configured');
     } on Exception catch (e) {
@@ -36,6 +37,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: kPrimeryColor,
+        textTheme: GoogleFonts.montserratTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
       home: /* FutureBuilder(
 
@@ -46,7 +50,7 @@ class MyApp extends StatelessWidget {
             }
             return const Splash();
           }) */
-         const Home(),
+          const MediaData(),
     );
   }
 }

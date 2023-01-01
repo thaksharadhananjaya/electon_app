@@ -52,7 +52,8 @@ dependencies:
   video_compress: ^3.1.0
   amplify_authenticator: ^0.2.2
   amplify_datastore: ^0.6.4
-  sqflite: ^2.0.3
+  google_fonts: ^3.0.1
+  modal_bottom_sheet: ^2.1.2
   
  
 
