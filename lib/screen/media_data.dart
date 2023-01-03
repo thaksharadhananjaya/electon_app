@@ -42,17 +42,18 @@ class _MediaDataState extends State<MediaData> {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           color: const Color.fromARGB(77, 228, 224, 224),
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: const Color(0xFFE6E6E6)),
                           borderRadius: BorderRadius.circular(8)),
-                      child: Icon(
+                      child: const Icon(
                         Icons.camera_alt,
                         size: 140,
-                        color: Colors.blue[200],
+                        color: kPrimeryColor,
                       )),
                 ),
                 CustomTextFeild(
                     label: 'Remark', controller: textEditingControllerRemark),
-                CustomButton(label: 'Upload', onPress: () {})
+                CustomButton(label: 'Upload', onPress: () {}),
+                const SizedBox(height: 96,)
               ],
             ),
           ),

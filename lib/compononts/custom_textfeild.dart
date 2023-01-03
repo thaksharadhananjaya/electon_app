@@ -22,10 +22,8 @@ class CustomTextFeild extends StatelessWidget {
       children: [
        
         Text(label,
-            style: GoogleFonts.montserrat(
-              textStyle: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.w500),
-            )),
+            style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w600)),
         Container(
         
           padding: const EdgeInsets.all(6),
@@ -37,9 +35,8 @@ class CustomTextFeild extends StatelessWidget {
             keyboardType: textInputType,
             maxLines: 6,
             maxLength: 150,
-            style: GoogleFonts.montserrat(
-                    textStyle: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w500)),
+            style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),
             decoration: const InputDecoration(
               
               //hintText: hint,

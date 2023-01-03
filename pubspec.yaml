@@ -33,28 +33,27 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
   image_picker: ^0.8.5+2
   path_provider: ^2.0.10
   permission_handler: ^10.0.0
   geolocator: ^8.2.1
   video_player: ^2.4.2
   another_flushbar: ^1.10.29
-  custom_floating_action_button: ^0.0.3
   sn_progress_dialog: ^1.0.7
-  easy_autocomplete: ^1.5.0
   http: ^0.13.4
   move_to_background: ^1.0.2
-  amplify_flutter: ^0.6.3
-  amplify_core: ^0.6.3
-  amplify_auth_cognito: ^0.6.3
-  amplify_storage_s3: ^0.6.3
+  flutter_otp_text_field: ^1.1.1
+  #amplify_flutter: ^0.6.3
+  #amplify_core: ^0.6.3
+  #amplify_auth_cognito: ^0.6.3
+  #amplify_storage_s3: ^0.6.3
   video_compress: ^3.1.0
-  amplify_authenticator: ^0.2.2
-  amplify_datastore: ^0.6.4
+  #amplify_authenticator: ^0.2.2
+  #amplify_datastore: ^0.6.4
   google_fonts: ^3.0.1
   modal_bottom_sheet: ^2.1.2
-  
+  circle_bottom_navigation_bar: ^1.0.0
+  intl_phone_number_input: ^0.7.0+2
  
 
 dev_dependencies:
@@ -83,6 +82,10 @@ flutter:
   assets:
      - assets/logo.png
      - assets/camera.png
+     - assets/header_signin.png
+     - assets/otp.png
+     - assets/otp2.png
+     - assets/back.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
