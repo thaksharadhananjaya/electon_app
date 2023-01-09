@@ -3,6 +3,5 @@
 import 'package:flutter/material.dart';
 
 const Color kPrimeryColor = Color(0xFF0226B9);
-
-const String API_END_POINT = "https://test.electionnigeria.live/";
+const URL = 'https://api.logeecai.com';
 const String ACCESS_KEY = '1234';

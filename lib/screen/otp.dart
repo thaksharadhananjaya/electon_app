@@ -1,4 +1,4 @@
-import 'package:election_app/main.dart';
+/*import 'package:election_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
@@ -57,12 +57,10 @@ class _OTPScreenState extends State<OTPScreen> {
                 borderColor: kPrimeryColor,
                 showFieldAsBox: true,
                 fieldWidth: 50,
-                onCodeChanged: (String code) {
-                  
-                },
+                onCodeChanged: (String code) {},
                 onSubmit: (String verificationCode) {
                   print(verificationCode);
-                }, 
+                },
               ),
             ),
             CustomButton(
@@ -77,3 +75,4 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 }
+*/

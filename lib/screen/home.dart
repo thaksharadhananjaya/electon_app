@@ -1,5 +1,4 @@
-import 'package:election_app/compononts/button.dart';
-import 'package:election_app/screen/signin.dart';
+
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -14,12 +13,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Center(
      
-      child: CustomButton(
-          label: 'Signout',
-          onPress: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: ((context) => const SignIn())));
-          }),
+      child: Image.asset('assets/welcome.png')
     );
   }
 }

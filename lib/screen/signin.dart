@@ -1,7 +1,13 @@
-import 'package:election_app/screen/otp.dart';
+import 'dart:convert';
+
+import 'package:another_flushbar/flushbar.dart';
+import 'package:election_app/main.dart';
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:http/http.dart' as http;
 import '../compononts/button.dart';
+import '../compononts/custom_textfeild.dart';
+import '../compononts/paswordfield.dart';
+import '../config.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key key}) : super(key: key);
@@ -11,8 +17,10 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  TextEditingController textPhoneController = TextEditingController();
+  TextEditingController textEmailController = TextEditingController();
+  TextEditingController textPasswordController = TextEditingController();
   String phone = "";
+  bool isLogin = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,17 +40,28 @@ class _SignInState extends State<SignIn> {
             const SizedBox(
               height: 24,
             ),
-            buildPhoneTextField(),
+            //buildPhoneTextField(),
 
+            CustomTextFeild(
+              hint: 'Email',
+              controller: textEmailController,
+              image: "email.png",
+              textInputType: TextInputType.emailAddress,
+            ),
+            PasswordFeild(
+              controller: textPasswordController,
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 32, bottom: 32),
               child: CustomButton(
+                  isLoading: isLogin,
                   label: "SIGN IN",
                   onPress: () {
-                    Navigator.push(
+                    login();
+                    /*  Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: ((context) => const OTPScreen())));
+                            builder: ((context) => const Main()))); */
                   }),
             ),
           ],
@@ -51,7 +70,92 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Widget buildPhoneTextField() {
+  void login() async {
+    if (textEmailController.text.isEmpty && textPasswordController.text.isEmpty) {
+      Flushbar(
+            message: 'Enter your email & password!',
+            messageColor: Colors.red,
+            //backgroundColor: kPrimeryColor,
+            duration: const Duration(seconds: 3),
+            icon: const Icon(
+              Icons.warning_rounded,
+              color: Colors.red,
+            ),
+          ).show(context);
+    }else if (textEmailController.text.isEmpty) {
+      Flushbar(
+            message: 'Enter your email!',
+            messageColor: Colors.red,
+            //backgroundColor: kPrimeryColor,
+            duration: const Duration(seconds: 3),
+            icon: const Icon(
+              Icons.warning_rounded,
+              color: Colors.red,
+            ),
+          ).show(context);
+    } else if (textPasswordController.text.isEmpty) {
+      Flushbar(
+            message: 'Enter your password!',
+            messageColor: Colors.red,
+            //backgroundColor: kPrimeryColor,
+            duration: const Duration(seconds: 3),
+            icon: const Icon(
+              Icons.warning_rounded,
+              color: Colors.red,
+            ),
+          ).show(context);
+    } else {
+      setState(() {
+        isLogin = true;
+      });
+      try {
+        String path = "$URL/login";
+
+        final response = await http.post(Uri.parse(path),
+            body: json.encode({"email": textEmailController.text, "password": textPasswordController.text}),
+            headers: {
+              'accept': 'application/json',
+              'Content-Type': 'application/json'
+            });
+        setState(() {
+          isLogin = false;
+        });
+        if (response.statusCode == 200) {
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: ((context) => const Main())));
+        } else {
+          // ignore: use_build_context_synchronously
+          Flushbar(
+            message: 'User not registered!',
+            messageColor: Colors.red,
+            //backgroundColor: kPrimeryColor,
+            duration: const Duration(seconds: 3),
+            icon: const Icon(
+              Icons.warning_rounded,
+              color: Colors.red,
+            ),
+          ).show(context);
+        }
+      } catch (e) {
+        setState(() {
+          isLogin = false;
+        });
+        Flushbar(
+          message: e.toString(),
+          messageColor: Colors.red,
+          //backgroundColor: kPrimeryColor,
+          duration: const Duration(seconds: 3),
+          icon: const Icon(
+            Icons.warning_rounded,
+            color: Colors.red,
+          ),
+        ).show(context);
+      }
+    }
+  }
+
+  /* Widget buildPhoneTextField() {
     double height = MediaQuery.of(context).size.height;
     return Container(
         margin: const EdgeInsets.only(left: 16, right: 16, bottom: 18),
@@ -75,7 +179,7 @@ class _SignInState extends State<SignIn> {
           ignoreBlank: false,
           selectorTextStyle: const TextStyle(color: Colors.black),
           hintText: 'Enter mobile number',
-          textFieldController: textPhoneController,
+          textFieldController: textPasswordController,
           maxLength: 16,
           formatInput: true,
           errorMessage: '',
@@ -84,5 +188,5 @@ class _SignInState extends State<SignIn> {
               signed: true, decimal: true),
           inputBorder: const OutlineInputBorder(borderSide: BorderSide.none),
         ));
-  }
+  } */
 }

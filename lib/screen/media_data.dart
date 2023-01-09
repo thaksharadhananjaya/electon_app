@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:election_app/compononts/button.dart';
-import 'package:election_app/compononts/custom_textfeild.dart';
+import 'package:election_app/compononts/custom_textbox.dart';
 import 'package:election_app/config.dart';
+import 'package:election_app/util/player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,19 +42,27 @@ class _MediaDataState extends State<MediaData> {
                       margin: const EdgeInsets.only(bottom: 36),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
+                          image: photo != null
+                              ? DecorationImage(
+                                  image: FileImage(photo), fit: BoxFit.cover)
+                              : null,
                           color: const Color.fromARGB(77, 228, 224, 224),
                           border: Border.all(color: const Color(0xFFE6E6E6)),
                           borderRadius: BorderRadius.circular(8)),
-                      child: const Icon(
-                        Icons.camera_alt,
-                        size: 140,
-                        color: kPrimeryColor,
-                      )),
+                      child: photo==null && controller == null
+                          ? const Icon(
+                              Icons.camera_alt,
+                              size: 140,
+                              color: kPrimeryColor,
+                            )
+                          : controller != null? AspectRatioVideo(controller): null),
                 ),
-                CustomTextFeild(
-                    label: 'Remark', controller: textEditingControllerRemark),
+                CustomTextBox(
+                    label: 'Remarks', controller: textEditingControllerRemark),
                 CustomButton(label: 'Upload', onPress: () {}),
-                const SizedBox(height: 96,)
+                const SizedBox(
+                  height: 96,
+                )
               ],
             ),
           ),
@@ -81,7 +90,10 @@ class _MediaDataState extends State<MediaData> {
 
   InkWell bottomButton(String label, IconData iconData, Function onClick) {
     return InkWell(
-      onTap: onClick,
+      onTap: () {
+        Navigator.pop(context);
+        onClick();
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -92,7 +104,7 @@ class _MediaDataState extends State<MediaData> {
           ),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 16,
                 color: kPrimeryColor,
                 fontWeight: FontWeight.bold),
@@ -118,6 +130,8 @@ class _MediaDataState extends State<MediaData> {
     }
 
     if (photo != null) {
+      controller=null;
+      video==null;
       setState(() {});
     }
   }

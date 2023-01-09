@@ -52,8 +52,7 @@ dependencies:
   #amplify_datastore: ^0.6.4
   google_fonts: ^3.0.1
   modal_bottom_sheet: ^2.1.2
-  circle_bottom_navigation_bar: ^1.0.0
-  intl_phone_number_input: ^0.7.0+2
+  awesome_bottom_navigation: ^0.0.2
  
 
 dev_dependencies:
@@ -83,9 +82,10 @@ flutter:
      - assets/logo.png
      - assets/camera.png
      - assets/header_signin.png
-     - assets/otp.png
-     - assets/otp2.png
+     - assets/email.png
+     - assets/lock.png
      - assets/back.png
+     - assets/welcome.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
