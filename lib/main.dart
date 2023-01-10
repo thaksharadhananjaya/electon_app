@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:awesome_bottom_navigation/awesome_bottom_navigation.dart';
 
-import 'package:election_app/compononts/button.dart';
+import 'package:election_app/components/button.dart';
 import 'package:election_app/screen/collation.dart';
 import 'package:election_app/screen/home.dart';
 import 'package:election_app/screen/signin.dart';
@@ -11,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:election_app/screen/media_data.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'amplifyconfiguration.dart';
 import 'config.dart';
 
 
@@ -28,7 +32,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
-  /*  void configureAmplify() async {
+    void configureAmplify() async {
     try {
       await Amplify.addPlugin(AmplifyAuthCognito());
       Amplify.addPlugin(AmplifyStorageS3());
@@ -38,11 +42,11 @@ class MyApp extends StatelessWidget {
     } on Exception catch (e) {
       print('Error configuring Amplify: $e');
     }
-  } */
+  } 
 
   @override
   Widget build(BuildContext context) {
-    //configureAmplify();
+    configureAmplify();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(

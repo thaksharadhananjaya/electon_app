@@ -1,12 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:election_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../compononts/button.dart';
-import '../compononts/custom_textfeild.dart';
-import '../compononts/paswordfield.dart';
+import '../components/button.dart';
+import '../components/custom_textfeild.dart';
+import '../components/paswordfield.dart';
 import '../config.dart';
 
 class SignIn extends StatefulWidget {
@@ -109,6 +110,7 @@ class _SignInState extends State<SignIn> {
         isLogin = true;
       });
       try {
+        await InternetAddress.lookup('google.com');
         String path = "$URL/login";
 
         final response = await http.post(Uri.parse(path),
