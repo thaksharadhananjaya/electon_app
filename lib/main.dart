@@ -9,22 +9,25 @@ import 'package:election_app/components/button.dart';
 import 'package:election_app/screen/collation.dart';
 import 'package:election_app/screen/home.dart';
 import 'package:election_app/screen/signin.dart';
+import 'package:election_app/screen/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:election_app/screen/media_data.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'amplifyconfiguration.dart';
 import 'config.dart';
 
-
-class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext context){
+  HttpClient createHttpClient(SecurityContext context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
+
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
@@ -32,7 +35,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
-    void configureAmplify() async {
+  void configureAmplify() async {
     try {
       await Amplify.addPlugin(AmplifyAuthCognito());
       Amplify.addPlugin(AmplifyStorageS3());
@@ -42,7 +45,14 @@ class MyApp extends StatelessWidget {
     } on Exception catch (e) {
       print('Error configuring Amplify: $e');
     }
-  } 
+  }
+
+  Future<bool> isLogin() async {
+    const storage = FlutterSecureStorage();
+    String value = await storage.read(key: 'email');
+
+    return value == null ? false : true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,25 +60,26 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
-      title: 'Election',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: buildMaterialColor(kPrimeryColor),
-        textTheme: GoogleFonts.montserratTextTheme(
-          Theme.of(context).textTheme,
+        title: 'Election',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: buildMaterialColor(kPrimeryColor),
+          textTheme: GoogleFonts.montserratTextTheme(
+            Theme.of(context).textTheme,
+          ),
         ),
-      ),
-      home: /* FutureBuilder(
-
-          future: Future.delayed(const Duration(seconds: 4)),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return const Home();
-            }
-            return const Splash();
-          }) */
-          const SignIn(),
-    );
+        home: FutureBuilder(
+            future: isLogin(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data) {
+                  return const Main();
+                } else {
+                  return const SignIn();
+                }
+              }
+              return const Splash();
+            }));
   }
 
   MaterialColor buildMaterialColor(Color color) {
@@ -100,9 +111,11 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
+  final storage = FlutterSecureStorage();
   int currentPage = 0;
   List pages = [const Home(), const MediaData(), const Collation()];
   List pagesName = ['Home', 'Upload Data', 'Collation'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,13 +156,33 @@ class _MainState extends State<Main> {
     return Drawer(
       child: Column(
         children: [
-          const SizedBox(height: 50,),
-          Image.asset('assets/logo.png', height: 120,),
-          const Text('ELECTION', style: TextStyle(color: kPrimeryColor, fontWeight: FontWeight.bold, fontSize: 22),),
+          const SizedBox(
+            height: 50,
+          ),
+          Image.asset(
+            'assets/logo.png',
+            height: 120,
+          ),
+          const Text(
+            'ELECTION',
+            style: TextStyle(
+                color: kPrimeryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 22),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 28),
-            child: CustomButton(label: 'Signout', height: 48, onPress: () {Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: ((context) => const SignIn())));}),
+            child: CustomButton(
+                label: 'Signout',
+                height: 48,
+                onPress: () async {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => const SignIn())));
+                  const storage = FlutterSecureStorage();
+                  await storage.deleteAll();
+                }),
           )
         ],
       ),

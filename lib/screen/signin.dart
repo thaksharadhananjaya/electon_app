@@ -1,9 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:election_app/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../components/button.dart';
 import '../components/custom_textfeild.dart';
@@ -110,7 +112,6 @@ class _SignInState extends State<SignIn> {
         isLogin = true;
       });
       try {
-        await InternetAddress.lookup('google.com');
         String path = "$URL/login";
 
         final response = await http.post(Uri.parse(path),
@@ -123,11 +124,17 @@ class _SignInState extends State<SignIn> {
           isLogin = false;
         });
         if (response.statusCode == 200) {
-          // ignore: use_build_context_synchronously
+          const storage = FlutterSecureStorage();
+          var data = json.decode(response.body)['user'] ;
+          await storage.write(key: 'email', value: data['email']);
+          await storage.write(key: 'phone', value: data['phone']);
+          await storage.write(key: 'user_type', value: data['user_type'].toString());
+          await storage.write(key: 'place', value: data['place']);
+          await storage.write(key: 'name', value: data['name']);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: ((context) => const Main())));
         } else {
-          // ignore: use_build_context_synchronously
+          
           Flushbar(
             message: 'User not registered!',
             messageColor: Colors.red,
