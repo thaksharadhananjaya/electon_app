@@ -33,6 +33,7 @@ class CustomTextBox extends StatelessWidget {
               borderRadius: BorderRadius.circular(8)),
           child: TextFormField(
             keyboardType: textInputType,
+            controller: controller,
             maxLines: 6,
             maxLength: 150,
             style: const TextStyle(

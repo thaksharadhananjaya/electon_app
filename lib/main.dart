@@ -6,7 +6,9 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:awesome_bottom_navigation/awesome_bottom_navigation.dart';
 
 import 'package:election_app/components/button.dart';
-import 'package:election_app/screen/collation.dart';
+import 'package:election_app/db/db_helper.dart';
+import 'package:election_app/repo/repo.dart';
+import 'package:election_app/screen/collation/collation.dart';
 import 'package:election_app/screen/home.dart';
 import 'package:election_app/screen/signin.dart';
 import 'package:election_app/screen/splash.dart';
@@ -54,8 +56,28 @@ class MyApp extends StatelessWidget {
     return value == null ? false : true;
   }
 
+  Future<void> checkUploading() async {
+    DBHelper dbHelper = DBHelper();
+    List data = await dbHelper.getDataOffline();
+    if (data.isNotEmpty) {
+      for (var row in data) {
+        Repo.addData(
+            place: row['place'],
+            userType: row['user_type'],
+            remark: row['remark'],
+            file: row['file'],
+            type: row['file_type'],
+            lat: row['lat'],
+            long: row['long'],
+            phone: row['phone'],
+            email: row['email']);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkUploading();
     configureAmplify();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);

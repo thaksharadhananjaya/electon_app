@@ -1,8 +1,11 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:election_app/repo/repo.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -12,10 +15,13 @@ import 'package:election_app/config.dart';
 import 'package:election_app/util/player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:video_player/video_player.dart';
+
+import '../db/db_helper.dart';
 
 class MediaData extends StatefulWidget {
   const MediaData({Key key}) : super(key: key);
@@ -27,10 +33,31 @@ class MediaData extends StatefulWidget {
 class _MediaDataState extends State<MediaData> {
   TextEditingController textEditingControllerRemark = TextEditingController();
   VideoPlayerController controller;
+  DBHelper dbHelper = DBHelper();
   File photo;
   File video;
   final ImagePicker picker = ImagePicker();
   Timer timer;
+  Position position;
+
+  @override
+  void deactivate() {
+    if (controller != null) {
+      controller.setVolume(0.0);
+      controller.pause();
+    }
+
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    try {
+      controller.dispose();
+    } catch (e) {}
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,8 +120,9 @@ class _MediaDataState extends State<MediaData> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            bottomButton('Photo', Icons.photo, pickPhoto),
-            bottomButton('Video', Icons.video_camera_back_sharp, pickVideo),
+            bottomButton('Photo', Icons.photo, () => determinePosition(true)),
+            bottomButton('Video', Icons.video_camera_back_sharp,
+                () => determinePosition(false)),
           ],
         ),
       ),
@@ -182,10 +210,10 @@ class _MediaDataState extends State<MediaData> {
 
     if (photo != null) {
       await upload(photo, "photos/$time.jpg", 0);
-      Navigator.pop(context);
+      //Navigator.pop(context);
     } else if (video != null) {
       await upload(video, "videos/$time.mp4", 1);
-      Navigator.pop(context);
+      //Navigator.pop(context);
     } else {
       Flushbar(
         message: 'Please capture photo or video !',
@@ -206,7 +234,6 @@ class _MediaDataState extends State<MediaData> {
       /*  ProgressDialog pd = ProgressDialog(context: context);
       pd.show(max: 100, msg: 'File Uploading...', completed: Completed()); */
 
-      //await uploadTextData();
       ProgressDialog pd = ProgressDialog(context: context);
       pd.show(max: 100, msg: 'File Uploading...', completed: Completed());
       int val = 10;
@@ -225,8 +252,31 @@ class _MediaDataState extends State<MediaData> {
         local: file,
         options: options,
       );
-
-      print(data);
+      const storage = FlutterSecureStorage();
+      String place = await storage.read(key: 'place');
+      String userType = await storage.read(key: 'user_type');
+      String phone = await storage.read(key: 'phone');
+      String email = await storage.read(key: 'email');
+      await dbHelper.saveDataOffline(
+          email: email,
+          userType: int.parse(userType),
+          remark: textEditingControllerRemark.text,
+          place: place,
+          phone: phone,
+          file: data.key,
+          type: type,
+          lat: position.latitude,
+          long: position.longitude);
+      await Repo.addData(
+          email: email,
+          userType: int.parse(userType),
+          remark: textEditingControllerRemark.text,
+          place: place,
+          phone: phone,
+          file: data.key,
+          type: type,
+          lat: position.latitude,
+          long: position.longitude);
 
       try {
         controller.dispose();
@@ -246,6 +296,57 @@ class _MediaDataState extends State<MediaData> {
           color: Colors.red,
         ),
       ).show(context);
+    }
+  }
+
+  Future<void> determinePosition(bool mode) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Flushbar(
+        message: 'Location services are disabled. Please enable',
+        messageColor: Colors.red,
+        duration: const Duration(seconds: 3),
+        icon: const Icon(
+          Icons.warning_rounded,
+          color: Colors.red,
+        ),
+      ).show(context);
+    } else {
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.deniedForever) {
+        Flushbar(
+          message:
+              'Location permissions are permanently denied, we cannot request permissions.',
+          messageColor: Colors.red,
+          duration: const Duration(seconds: 3),
+          icon: const Icon(
+            Icons.warning_rounded,
+            color: Colors.red,
+          ),
+        ).show(context);
+      } else if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          Flushbar(
+            message: 'Location permissions are denied !',
+            messageColor: Colors.red,
+            duration: const Duration(seconds: 3),
+            icon: const Icon(
+              Icons.warning_rounded,
+              color: Colors.red,
+            ),
+          ).show(context);
+        } else {
+          position = await Geolocator.getCurrentPosition();
+          mode ? pickPhoto() : pickVideo();
+        }
+      } else {
+        position = await Geolocator.getCurrentPosition();
+        mode ? pickPhoto() : pickVideo();
+      }
     }
   }
 }
