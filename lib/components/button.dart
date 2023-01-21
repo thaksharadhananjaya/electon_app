@@ -5,12 +5,14 @@ import '../config.dart';
 class CustomButton extends StatelessWidget {
   final String label;
   final Function onPress;
+  Color backgroundColor;
   bool isLoading;
   double elevation;
   double height;
   CustomButton(
       {Key key,
       this.isLoading = false,
+      this.backgroundColor=kPrimeryColor,
       this.elevation = 1,
       this.height = 60,
       @required this.label,
@@ -24,7 +26,7 @@ class CustomButton extends StatelessWidget {
       height: height,
       minWidth: screenwidth * 0.8,
       elevation: elevation,
-      color: kPrimeryColor,
+      color: backgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       onPressed: () => onPress(),
       child: isLoading

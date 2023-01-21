@@ -48,11 +48,13 @@ dependencies:
   amplify_auth_cognito: ^0.6.3
   amplify_storage_s3: ^0.6.3
   video_compress: ^3.1.0
-  amplify_authenticator: ^0.2.2
-  amplify_datastore: ^0.6.4
+  sqflite: ^2.0.3
   google_fonts: ^3.0.1
   modal_bottom_sheet: ^2.1.2
-  awesome_bottom_navigation: ^0.0.2
+  #intl_phone_number_input: ^0.7.0+2
+  awesome_bottom_navigation: ^0.0.4
+  flutter_secure_storage: ^7.0.1
+  delayed_display: ^2.0.0
  
 
 dev_dependencies:
@@ -82,10 +84,15 @@ flutter:
      - assets/logo.png
      - assets/camera.png
      - assets/header_signin.png
+     - assets/back.png
      - assets/email.png
      - assets/lock.png
-     - assets/back.png
      - assets/welcome.png
+     - assets/vote.png
+     - assets/vote_rej.png
+     - assets/vote_ac.png
+     - assets/user.png
+     - assets/avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

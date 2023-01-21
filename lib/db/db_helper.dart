@@ -23,7 +23,7 @@ class DBHelper {
         onCreate: (Database db, int version) async {
       try {
         await db.execute(
-            "CREATE TABLE userdata (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,place TEXT NOT NULL,user_type NUMBER NOT NULL,file TEXT NOT NULL, remark TEXT NOT NULL, phone TEXT NOT NULL,file_type TEXT NOT NULL, email TEXT NOT NULL ,lat DOUBLE NOT NULL,long DOUBLE NOT NULL)");
+            "CREATE TABLE userdata (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,file TEXT NOT NULL, remark TEXT NOT NULL,file_type TEXT NOT NULL ,lat DOUBLE NOT NULL,long DOUBLE NOT NULL)");
       } catch (e) {
         print("hh: $e");
       }
@@ -32,13 +32,10 @@ class DBHelper {
   }
 
   Future saveDataOffline(
-      {String place,
-      int userType,
+      {
       String remark,
       String file,
       int type,
-      String email,
-      String phone,
       double lat,
       double long}) async {
     var dbClient = await db;
@@ -48,17 +45,13 @@ class DBHelper {
         return await txn.rawQuery(
             """INSERT INTO userdata
                 (
-                place,
-                user_type,
                 remark,
                 file,
                 file_type,
                 lat,
-                long,
-                phone,
-                email
+                long
                 )
-                VALUES('$place',  '$userType', '$remark',  '$file', '$type', '$lat', '$long', '$phone', '$email')""");
+                VALUES('$remark',  '$file', '$type', '$lat', '$long')""");
       });
     } catch (e) {
       print(e);

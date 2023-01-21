@@ -70,7 +70,7 @@ class _MediaDataState extends State<MediaData> {
                 buildCameraButton(),
                 CustomTextBox(
                     label: 'Remarks', controller: textEditingControllerRemark),
-                CustomButton(label: 'Upload', onPress: submit),
+                CustomButton(label: 'Upload', backgroundColor: Colors.green, onPress: submit),
                 const SizedBox(
                   height: 96,
                 )
@@ -252,27 +252,21 @@ class _MediaDataState extends State<MediaData> {
         local: file,
         options: options,
       );
-      const storage = FlutterSecureStorage();
-      String place = await storage.read(key: 'place');
+      /*const storage = FlutterSecureStorage();
+        var user = json.decode( await storage.read(key: 'user'));
       String userType = await storage.read(key: 'user_type');
       String phone = await storage.read(key: 'phone');
-      String email = await storage.read(key: 'email');
+      String email = await storage.read(key: 'email'); */
+
       await dbHelper.saveDataOffline(
-          email: email,
-          userType: int.parse(userType),
           remark: textEditingControllerRemark.text,
-          place: place,
-          phone: phone,
           file: data.key,
           type: type,
           lat: position.latitude,
           long: position.longitude);
+          
       await Repo.addData(
-          email: email,
-          userType: int.parse(userType),
           remark: textEditingControllerRemark.text,
-          place: place,
-          phone: phone,
           file: data.key,
           type: type,
           lat: position.latitude,

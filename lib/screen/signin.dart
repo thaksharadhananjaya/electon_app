@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import '../components/button.dart';
 import '../components/custom_textfeild.dart';
 import '../components/paswordfield.dart';
-import '../config.dart';
+
 
 class SignIn extends StatefulWidget {
   const SignIn({Key key}) : super(key: key);
@@ -46,9 +46,9 @@ class _SignInState extends State<SignIn> {
             //buildPhoneTextField(),
 
             CustomTextFeild(
-              hint: 'Email',
+              hint: 'Username',
               controller: textEmailController,
-              image: "email.png",
+              image: "user.png",
               textInputType: TextInputType.emailAddress,
             ),
             PasswordFeild(
@@ -76,7 +76,7 @@ class _SignInState extends State<SignIn> {
   void login() async {
     if (textEmailController.text.isEmpty && textPasswordController.text.isEmpty) {
       Flushbar(
-            message: 'Enter your email & password!',
+            message: 'Enter your username & password!',
             messageColor: Colors.red,
             //backgroundColor: kPrimeryColor,
             duration: const Duration(seconds: 3),
@@ -87,7 +87,7 @@ class _SignInState extends State<SignIn> {
           ).show(context);
     }else if (textEmailController.text.isEmpty) {
       Flushbar(
-            message: 'Enter your email!',
+            message: 'Enter your username!',
             messageColor: Colors.red,
             //backgroundColor: kPrimeryColor,
             duration: const Duration(seconds: 3),
@@ -112,25 +112,24 @@ class _SignInState extends State<SignIn> {
         isLogin = true;
       });
       try {
-        String path = "$URL/login";
-
+        String path = "https://webapp-xcuj.onrender.com/api/login";
+        String userName = 'majeed'; // textEmailController.text;
+        String password = 'Mjdhsn123'; //textPasswordController.text;
         final response = await http.post(Uri.parse(path),
-            body: json.encode({"email": textEmailController.text, "password": textPasswordController.text}),
+            body: json.encode({"username": userName, "password": password}),
             headers: {
               'accept': 'application/json',
               'Content-Type': 'application/json'
             });
+
         setState(() {
           isLogin = false;
         });
         if (response.statusCode == 200) {
           const storage = FlutterSecureStorage();
           var data = json.decode(response.body)['user'] ;
-          await storage.write(key: 'email', value: data['email']);
-          await storage.write(key: 'phone', value: data['phone']);
-          await storage.write(key: 'user_type', value: data['user_type'].toString());
-          await storage.write(key: 'place', value: data['place']);
-          await storage.write(key: 'name', value: data['name']);
+          await storage.write(key: 'user', value: json.encode(data));
+          //textEmailController.text=data.toString();
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: ((context) => const Main())));
         } else {

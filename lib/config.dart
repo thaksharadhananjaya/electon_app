@@ -2,6 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-const Color kPrimeryColor = Color(0xFF0226B9);
+const Color kPrimeryColor = Color(0xFFFF3338);
 const URL = 'https://api.logeecai.com';
 const String ACCESS_KEY = '1234';
