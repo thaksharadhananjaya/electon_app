@@ -30,8 +30,6 @@ class Repo {
               'type': type,
               'lat': lat,
               'long': long,
-              'phone': user['phone'],
-              'email': user['email']
             }
           }),
           headers: headers);
@@ -40,104 +38,148 @@ class Repo {
       if (response.statusCode == 200) {
         DBHelper dbHelper = DBHelper();
         dbHelper.deleteDataOffline();
-        
       }
     } catch (e) {
       addData(remark: remark, file: file, lat: lat, long: long);
     }
   }
 
-  static Future<bool> addCollation(
-      {String reg,
-      String accredited,
-      String rejected,
-      String textA,
-      String textAA,
-      String textADP,
-      String textAPP,
-      String textAAC,
-      String textADC,
-      String textAPC,
-      String textAPGA,
-      String textAPM,
-      String textBP,
-      String textLP,
-      String textNRM,
-      String textNNPP,
-      String textPDP,
-      String textPRP,
-      String textSDP,
-      String textYPP,
-      String textZLP}) async {
+  static Future addCollation(
+      {int reg,
+      int accredited,
+      int rejected,
+      int textA,
+      int textAA,
+      int textADP,
+      int textAPP,
+      int textAAC,
+      int textADC,
+      int textAPC,
+      int textAPGA,
+      int textAPM,
+      int textBP,
+      int textLP,
+      int textNRM,
+      int textNNPP,
+      int textPDP,
+      int textPRP,
+      int textSDP,
+      int textYPP,
+      int textZLP}) async {
     const storage = FlutterSecureStorage();
     var user = json.decode(await storage.read(key: 'user'));
 
     try {
-      final response = await http.post(Uri.parse("$URL/mobile-submit"),
+      final response = await http.post(Uri.parse("$URL/mobile_submit"),
           body: json.encode({
             "user": user,
-            "userdata_collate": {'phone': user['phone'], 'email': user['email']}
+            "userdata_collate": {
+              'A': textA,
+              'AA': textAA,
+              'AAC': textAAC,
+              'ADC': textADC,
+              'ADP': textADP,
+              'APC': textAPC,
+              'APGA': textAPGA,
+              'APM': textAPM,
+              'APP': textAPP,
+              'BP': textBP,
+              'LP': textLP,
+              'NNPP': textNNPP,
+              'NRM': textNRM,
+              'PDP': textPDP,
+              'PRP': textPRP,
+              'SDP': textSDP,
+              'YPP': textYPP,
+              'ZLP': textZLP,
+              'Total_Accredited_voters': accredited,
+              'Total_Registered_voters': reg,
+              'Total_Rejected_votes': reg
+            }
           }),
           headers: headers);
-      //print(response.headers);
-      print(response.statusCode);
 
       if (response.statusCode == 200) {
-        DBHelper dbHelper = DBHelper();
-        dbHelper.deleteDataOffline();
-        return true;
+        var data = json.decode(response.body);
+        return {
+          'success': true,
+          'person': data['person_collated'],
+          'time': data['time']
+        };
       }
-      
     } catch (e) {
       debugPrint(e);
-      
     }
-    return false;
+    return {'success': false};
   }
 
-   static Future<bool> cancelCollation(
-      {String reg,
-      String accredited,
-      String rejected,
-      String textA,
-      String textAA,
-      String textADP,
-      String textAPP,
-      String textAAC,
-      String textADC,
-      String textAPC,
-      String textAPGA,
-      String textAPM,
-      String textBP,
-      String textLP,
-      String textNRM,
-      String textNNPP,
-      String textPDP,
-      String textPRP,
-      String textSDP,
-      String textYPP,
-      String textZLP}) async {
+  static Future cancelCollation(
+      {int reg,
+      int accredited,
+      int rejected,
+      int textA,
+      int textAA,
+      int textADP,
+      int textAPP,
+      int textAAC,
+      int textADC,
+      int textAPC,
+      int textAPGA,
+      int textAPM,
+      int textBP,
+      int textLP,
+      int textNRM,
+      int textNNPP,
+      int textPDP,
+      int textPRP,
+      int textSDP,
+      int textYPP,
+      int textZLP}) async {
     const storage = FlutterSecureStorage();
     var user = json.decode(await storage.read(key: 'user'));
 
     try {
-      final response = await http.post(Uri.parse("$URL/mobile-submit"),
+      final response = await http.post(Uri.parse("$URL/mobile-cancel"),
           body: json.encode({
             "user": user,
-            "userdata_collate": {'phone': user['phone'], 'email': user['email']}
+            "userdata_collate": {
+              'A': textA,
+              'AA': textAA,
+              'AAC': textAAC,
+              'ADC': textADC,
+              'ADP': textADP,
+              'APC': textAPC,
+              'APGA': textAPGA,
+              'APM': textAPM,
+              'APP': textAPP,
+              'BP': textBP,
+              'LP': textLP,
+              'NNPP': textNNPP,
+              'NRM': textNRM,
+              'PDP': textPDP,
+              'PRP': textPRP,
+              'SDP': textSDP,
+              'YPP': textYPP,
+              'ZLP': textZLP,
+              'Total_Accredited_voters': accredited,
+              'Total_Registered_voters': reg,
+              'Total_Rejected_votes': reg
+            }
           }),
           headers: headers);
       //print(response.headers);
       print(response.statusCode);
 
       if (response.statusCode == 200) {
-        DBHelper dbHelper = DBHelper();
-        dbHelper.deleteDataOffline();
-        return false;
+        var data = json.decode(response.body);
+        return {
+          'success': false,
+          'person': data['person_collated'],
+          'time': data['time']
+        };
       }
     } catch (e) {
       debugPrint(e);
-      
     }
     return true;
   }

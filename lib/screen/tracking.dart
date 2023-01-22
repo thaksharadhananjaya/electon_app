@@ -23,14 +23,14 @@ import 'package:video_player/video_player.dart';
 
 import '../db/db_helper.dart';
 
-class MediaData extends StatefulWidget {
-  const MediaData({Key key}) : super(key: key);
+class Tracking extends StatefulWidget {
+  const Tracking({Key key}) : super(key: key);
 
   @override
-  _MediaDataState createState() => _MediaDataState();
+  _TrackingState createState() => _TrackingState();
 }
 
-class _MediaDataState extends State<MediaData> {
+class _TrackingState extends State<Tracking> {
   TextEditingController textEditingControllerRemark = TextEditingController();
   VideoPlayerController controller;
   DBHelper dbHelper = DBHelper();

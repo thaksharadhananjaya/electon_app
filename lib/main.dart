@@ -11,12 +11,12 @@ import 'package:election_app/db/db_helper.dart';
 import 'package:election_app/repo/repo.dart';
 import 'package:election_app/screen/collation/collation.dart';
 import 'package:election_app/screen/home.dart';
-import 'package:election_app/screen/profile.dart';
+import 'package:election_app/screen/profile/profile.dart';
 import 'package:election_app/screen/signin.dart';
 import 'package:election_app/screen/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:election_app/screen/media_data.dart';
+import 'package:election_app/screen/tracking.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -139,12 +139,12 @@ class Main extends StatefulWidget {
 
 class _MainState extends State<Main> {
   int currentPage = 0;
-  List pages = [const Home(), const MediaData(), Collation()];
-  List pagesName = ['Home', 'Upload Data', 'Collation'];
+  List pages = [const Home(), const Tracking(), Collation()];
+  List pagesName = ['Home', 'Tracking', 'Collation'];
   String avatarLink = '', name = '';
   void getAvatar() async {
     const storage = FlutterSecureStorage();
-    var user = json.decode(await storage.read(key: 'user'));
+    var user = json.decode(await storage.read(key: 'user'))['user'];
     setState(() {
       avatarLink = user['avatar'];
       name = user['username'];

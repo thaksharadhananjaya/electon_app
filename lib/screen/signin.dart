@@ -113,8 +113,8 @@ class _SignInState extends State<SignIn> {
       });
       try {
         String path = "https://webapp-xcuj.onrender.com/api/login";
-        String userName = 'majeed'; // textEmailController.text;
-        String password = 'Mjdhsn123'; //textPasswordController.text;
+        String userName =  textEmailController.text;
+        String password = textPasswordController.text;
         final response = await http.post(Uri.parse(path),
             body: json.encode({"username": userName, "password": password}),
             headers: {
@@ -127,8 +127,8 @@ class _SignInState extends State<SignIn> {
         });
         if (response.statusCode == 200) {
           const storage = FlutterSecureStorage();
-          var data = json.decode(response.body)['user'] ;
-          await storage.write(key: 'user', value: json.encode(data));
+          //var data = json.decode(response.body)['user'] ;
+          await storage.write(key: 'user', value: response.body);
           //textEmailController.text=data.toString();
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: ((context) => const Main())));

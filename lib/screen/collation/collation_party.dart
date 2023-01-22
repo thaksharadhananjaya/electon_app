@@ -1,12 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:election_app/components/button.dart';
 import 'package:election_app/components/collation_row.dart';
+import 'package:election_app/config.dart';
 import 'package:election_app/repo/repo.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../components/customDailog.dart';
+
 class CollationParty extends StatefulWidget {
-  final String registered, accredited, rejected;
+  final int registered, accredited, rejected;
   CollationParty({Key key, this.registered, this.accredited, this.rejected})
       : super(key: key);
 
@@ -52,13 +57,12 @@ class _CollationPartyState extends State<CollationParty> {
   TextEditingController textZLPController = TextEditingController();
 
   bool isLoading = false, isSubmit = false;
-
+  String resText = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
@@ -169,18 +173,26 @@ class _CollationPartyState extends State<CollationParty> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                          bottom: 32, left: 80, right: 80, top: 24),
+                          bottom: 10, left: 80, right: 80, top: 24),
                       child: isSubmit
                           ? CustomButton(
                               isLoading: isLoading,
                               label: 'Cancel',
-                              backgroundColor: Colors.red,
-                              onPress: cancelSubmit)
+                              backgroundColor: kPrimeryColor,
+                              onPress: buildDeleteBox)
                           : CustomButton(
-                            backgroundColor: Colors.green,
+                              backgroundColor: Colors.green,
                               isLoading: isLoading,
                               label: 'Submit',
                               onPress: submit),
+                    ),
+                    Text(
+                      resText,
+                      style: TextStyle(
+                          color: isSubmit ? Colors.green : kPrimeryColor),
+                    ),
+                    const SizedBox(
+                      height: 32,
                     )
                   ],
                 ),
@@ -234,28 +246,46 @@ class _CollationPartyState extends State<CollationParty> {
         isLoading = true;
       });
 
-      isSubmit = await Repo.addCollation(
+      var data = await Repo.addCollation(
           reg: widget.registered,
           accredited: widget.accredited,
           rejected: widget.rejected,
-          textA: textA,
-          textAA: textAA,
-          textADP: textADP,
-          textAPP: textAPP,
-          textAAC: textAAC,
-          textADC: textADC,
-          textAPC: textAPC,
-          textAPGA: textAPGA,
-          textAPM: textAPM,
-          textBP: textBP,
-          textLP: textLP,
-          textNRM: textNRM,
-          textNNPP: textNNPP,
-          textPDP: textPDP,
-          textPRP: textPRP,
-          textSDP: textSDP,
-          textYPP: textYPP,
-          textZLP: textZLP);
+          textA: int.parse(textA),
+          textAA: int.parse(textAA),
+          textADP: int.parse(textADP),
+          textAPP: int.parse(textAPP),
+          textAAC: int.parse(textAAC),
+          textADC: int.parse(textADC),
+          textAPC: int.parse(textAPC),
+          textAPGA: int.parse(textAPGA),
+          textAPM: int.parse(textAPM),
+          textBP: int.parse(textBP),
+          textLP: int.parse(textLP),
+          textNRM: int.parse(textNRM),
+          textNNPP: int.parse(textNNPP),
+          textPDP: int.parse(textPDP),
+          textPRP: int.parse(textPRP),
+          textSDP: int.parse(textSDP),
+          textYPP: int.parse(textYPP),
+          textZLP: int.parse(textZLP));
+      isSubmit = data['success'];
+      if (isSubmit) {
+        resText = "Submited by\n${data['person']} at\n${data['time']}";
+      } else {
+        resText = '';
+        Flushbar(
+          messageText: const Text(
+            'Some thing went wrong!',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+          ),
+          //backgroundColor: kPrimeryColor,
+          duration: const Duration(seconds: 3),
+          icon: const Icon(
+            Icons.warning_rounded,
+            color: Colors.red,
+          ),
+        ).show(context);
+      }
       setState(() {
         isLoading = false;
       });
@@ -273,6 +303,14 @@ class _CollationPartyState extends State<CollationParty> {
         ),
       ).show(context);
     }
+  }
+
+  Future<dynamic> buildDeleteBox() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => ComfirmDailogBox(
+              onTap: submit,
+            ));
   }
 
   void cancelSubmit() async {
@@ -299,30 +337,81 @@ class _CollationPartyState extends State<CollationParty> {
     String textYPP = textYPPController.text;
     String textZLP = textZLPController.text;
 
-    isSubmit = await Repo.cancelCollation(
-        reg: widget.registered,
-        accredited: widget.accredited,
-        rejected: widget.rejected,
-        textA: textA,
-        textAA: textAA,
-        textADP: textADP,
-        textAPP: textAPP,
-        textAAC: textAAC,
-        textADC: textADC,
-        textAPC: textAPC,
-        textAPGA: textAPGA,
-        textAPM: textAPM,
-        textBP: textBP,
-        textLP: textLP,
-        textNRM: textNRM,
-        textNNPP: textNNPP,
-        textPDP: textPDP,
-        textPRP: textPRP,
-        textSDP: textSDP,
-        textYPP: textYPP,
-        textZLP: textZLP);
-    setState(() {
-      isLoading = false;
-    });
+    if (textA.isNotEmpty &&
+        textAA.isNotEmpty &&
+        textADP.isNotEmpty &&
+        textAPP.isNotEmpty &&
+        textAAC.isNotEmpty &&
+        textADC.isNotEmpty &&
+        textAPC.isNotEmpty &&
+        textAPGA.isNotEmpty &&
+        textAPM.isNotEmpty &&
+        textBP.isNotEmpty &&
+        textLP.isNotEmpty &&
+        textNRM.isNotEmpty &&
+        textNNPP.isNotEmpty &&
+        textPDP.isNotEmpty &&
+        textPRP.isNotEmpty &&
+        textSDP.isNotEmpty &&
+        textYPP.isNotEmpty &&
+        textZLP.isNotEmpty) {
+      var data = await Repo.cancelCollation(
+          reg: widget.registered,
+          accredited: widget.accredited,
+          rejected: widget.rejected,
+          textA: int.parse(textA),
+          textAA: int.parse(textAA),
+          textADP: int.parse(textADP),
+          textAPP: int.parse(textAPP),
+          textAAC: int.parse(textAAC),
+          textADC: int.parse(textADC),
+          textAPC: int.parse(textAPC),
+          textAPGA: int.parse(textAPGA),
+          textAPM: int.parse(textAPM),
+          textBP: int.parse(textBP),
+          textLP: int.parse(textLP),
+          textNRM: int.parse(textNRM),
+          textNNPP: int.parse(textNNPP),
+          textPDP: int.parse(textPDP),
+          textPRP: int.parse(textPRP),
+          textSDP: int.parse(textSDP),
+          textYPP: int.parse(textYPP),
+          textZLP: int.parse(textZLP));
+
+      isSubmit = data['success'];
+      if (!isSubmit) {
+        resText = "Canceled by\n${data['person']} at\n${data['time']}";
+      } else {
+        resText = '';
+        Flushbar(
+          messageText: const Text(
+            'Some thing went wrong!',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+          ),
+          //backgroundColor: kPrimeryColor,
+          duration: const Duration(seconds: 3),
+          icon: const Icon(
+            Icons.warning_rounded,
+            color: Colors.red,
+          ),
+        ).show(context);
+      }
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      Flushbar(
+        messageText: const Text(
+          'All feilds are requied!',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+        ),
+        //backgroundColor: kPrimeryColor,
+        duration: const Duration(seconds: 3),
+        icon: const Icon(
+          Icons.warning_rounded,
+          color: Colors.red,
+        ),
+      ).show(context);
+    }
   }
 }

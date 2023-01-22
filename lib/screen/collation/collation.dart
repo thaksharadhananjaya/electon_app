@@ -64,9 +64,9 @@ class Collation extends StatelessWidget {
     if (reg.isNotEmpty && reject.isNotEmpty && acc.isNotEmpty) {
       Navigator.of(context).push(MaterialPageRoute(
           builder: ((context) => CollationParty(
-                accredited: acc,
-                registered: reg,
-                rejected: reject,
+                accredited: int.parse(acc),
+                registered:int.parse( reg),
+                rejected: int.parse(reject),
               ))));
     } else {
       Flushbar(

@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   const SizedBox(
-                    height: 50,
+                    height: 80,
                   ),
                   const DelayedDisplay(
                     delay: Duration(microseconds: 700),
@@ -79,7 +79,8 @@ class _HomeState extends State<Home> {
 
   void getWelcome() async {
     const storage = FlutterSecureStorage();
-    var user = json.decode(await storage.read(key: 'user'));
+    var user = json.decode(await storage.read(key: 'user'))['user'];
+    print("gg: ${user['aspirant_avatar']}");
 
     setState(() {
       avatarLink = user['aspirant_avatar'];
