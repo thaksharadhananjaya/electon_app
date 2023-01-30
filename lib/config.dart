@@ -3,5 +3,5 @@
 import 'package:flutter/material.dart';
 
 const Color kPrimeryColor = Color(0xFFFF3338);
-const URL = 'https://api.logeecai.com';
+const URL = 'https://electioapi.herokuapp.com';
 //const String ACCESS_KEY = '1234';

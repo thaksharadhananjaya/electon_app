@@ -213,7 +213,7 @@ class _TrackingState extends State<Tracking> {
       //Navigator.pop(context);
     } else if (video != null) {
       await upload(video, "videos/$time.mp4", 1);
-      //Navigator.pop(context);
+
     } else {
       Flushbar(
         message: 'Please capture photo or video !',
@@ -273,8 +273,14 @@ class _TrackingState extends State<Tracking> {
           long: position.longitude);
 
       try {
-        controller.dispose();
+         setState(() {
+          textEditingControllerRemark.clear();
+          photo = null;
+        });
+    print("ggggg");
+        //controller.dispose();
         controller = null;
+       
       } catch (e) {
         if (kDebugMode) {
           print("error $e");
@@ -342,5 +348,14 @@ class _TrackingState extends State<Tracking> {
         mode ? pickPhoto() : pickVideo();
       }
     }
+  }
+
+  void clear(){
+    setState(() {
+      textEditingControllerRemark.clear();
+    photo=null;
+    video=null;
+    });
+    
   }
 }

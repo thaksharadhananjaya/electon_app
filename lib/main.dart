@@ -9,6 +9,7 @@ import 'package:awesome_bottom_navigation/awesome_bottom_navigation.dart';
 import 'package:election_app/components/button.dart';
 import 'package:election_app/db/db_helper.dart';
 import 'package:election_app/repo/repo.dart';
+import 'package:election_app/screen/collation/col_home.dart';
 import 'package:election_app/screen/collation/collation.dart';
 import 'package:election_app/screen/home.dart';
 import 'package:election_app/screen/profile/profile.dart';
@@ -139,7 +140,7 @@ class Main extends StatefulWidget {
 
 class _MainState extends State<Main> {
   int currentPage = 0;
-  List pages = [const Home(), const Tracking(), Collation()];
+  List pages = [const Home(), const Tracking(), const ColHome()];
   List pagesName = ['Home', 'Tracking', 'Collation'];
   String avatarLink = '', name = '';
   void getAvatar() async {

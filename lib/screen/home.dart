@@ -2,10 +2,11 @@
 
 import 'dart:convert';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:election_app/config.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Home extends StatefulWidget {
@@ -49,15 +50,17 @@ class _HomeState extends State<Home> {
                   const SizedBox(
                     height: 80,
                   ),
-                  const DelayedDisplay(
+                 /*  const DelayedDisplay(
                     delay: Duration(microseconds: 700),
                     child: Text(
                       'Welcome',
                       textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: kPrimeryColor),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                          color: kPrimeryColor),
                     ),
-                  ),
+                  ), */
                   const SizedBox(
                     height: 8,
                   ),
@@ -79,43 +82,47 @@ class _HomeState extends State<Home> {
 
   void getWelcome() async {
     const storage = FlutterSecureStorage();
-    var user = json.decode(await storage.read(key: 'user'))['user'];
-    print("gg: ${user['aspirant_avatar']}");
-
+    var user = json.decode(await storage.read(key: 'user'));
+    //print("gg: $user");
+     avatarLink = user['user']['aspirant_avatar'];
+/* 
     setState(() {
-      avatarLink = user['aspirant_avatar'];
-      String country = user['level_childs']['country'] == ''
-          ? ''
-          : user['level_childs']['country'];
-      String state = user['level_childs']['sate'] == ''
-          ? ''
-          : "/${user['level_childs']['state']}";
-      String lga = user['level_childs']['lga'] == ''
-          ? ''
-          : "/${user['level_childs']['lga']}";
-      String ward = user['level_childs']['ward'] == ''
-          ? ''
-          : "/${user['level_childs']['ward']}";
-      String pol = user['level_childs']['pollingUnit'] == ''
-          ? ''
-          : "/${user['level_childs']['pollingUnit']}";
-      welcomeText =
-          "${user['name']} to \n${user['type_of_election']} at $country$state$lga$ward$pol";
-    });
+     
 
-    /*  String user_type = await storage.read(key: 'user_type');
+      String country = user['user']['level_childs']['country'].toString() == ''
+          ? ''
+          : user['user']['level_childs']['country'].toString();
+      String state = user['user']['level_childs']['sate'].toString() == ''
+          ? ''
+          : "/${user['user']['level_childs']['state']}";
+      String lga = user['user']['level_childs']['lga'].toString() == ''
+          ? ''
+          : "/${user['user']['level_childs']['lga']}";
+      String ward = user['user']['level_childs']['ward'].toString() == ''
+          ? ''
+          : "/${user['user']['level_childs']['ward']}";
+      String pol = user['user']['level_childs']['pollingUnit'].toString() == ''
+          ? ''
+          : "/${user['user']['level_childs']['pollingUnit']}";
+      welcomeText =
+          "${user['user']['name']} to \n${user['type_of_election']} at $country$state$lga$ward$pol";
+    }); */
+
+    //String user_type = await storage.read(key: 'user_type');
     try {
-      final response = await http.post(
-          Uri.parse("$URL/check-number-data?place=$place&user_type=$user_type"),
+      final response = await http.post(Uri.parse("$URL/mobile-message"),
+          body:json.encode( user),
           headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json'
           });
-      setState(() {
+  
         var data = jsonDecode(response.body);
-        name = data[1];
-        welcomeText = data[3];
-      });
+        print(data);
+        setState(() {
+          welcomeText = data['message'].join("\n");
+        });
+   
     } catch (e) {
       // ignore: use_build_context_synchronously
       Flushbar(
@@ -128,6 +135,6 @@ class _HomeState extends State<Home> {
           color: Colors.red,
         ),
       ).show(context);
-    } */
+    }
   }
 }

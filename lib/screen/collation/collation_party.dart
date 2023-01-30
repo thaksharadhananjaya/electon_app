@@ -12,7 +12,9 @@ import '../../components/customDailog.dart';
 
 class CollationParty extends StatefulWidget {
   final int registered, accredited, rejected;
-  CollationParty({Key key, this.registered, this.accredited, this.rejected})
+  final bool mode;
+  CollationParty(
+      {Key key, this.registered, this.accredited, this.rejected, this.mode})
       : super(key: key);
 
   @override
@@ -56,7 +58,7 @@ class _CollationPartyState extends State<CollationParty> {
 
   TextEditingController textZLPController = TextEditingController();
 
-  bool isLoading = false, isSubmit = false;
+  bool isLoading = false;
   String resText = '';
   @override
   Widget build(BuildContext context) {
@@ -174,22 +176,22 @@ class _CollationPartyState extends State<CollationParty> {
                     Padding(
                       padding: const EdgeInsets.only(
                           bottom: 10, left: 80, right: 80, top: 24),
-                      child: isSubmit
+                      child: widget.mode
                           ? CustomButton(
-                              isLoading: isLoading,
-                              label: 'Cancel',
-                              backgroundColor: kPrimeryColor,
-                              onPress: buildDeleteBox)
-                          : CustomButton(
                               backgroundColor: Colors.green,
                               isLoading: isLoading,
                               label: 'Submit',
-                              onPress: submit),
+                              onPress: submit)
+                          : CustomButton(
+                              isLoading: isLoading,
+                              label: 'Cancel',
+                              backgroundColor: kPrimeryColor,
+                              onPress: buildDeleteBox),
                     ),
                     Text(
                       resText,
                       style: TextStyle(
-                          color: isSubmit ? Colors.green : kPrimeryColor),
+                          color: widget.mode ? Colors.green : kPrimeryColor),
                     ),
                     const SizedBox(
                       height: 32,
@@ -268,8 +270,7 @@ class _CollationPartyState extends State<CollationParty> {
           textSDP: int.parse(textSDP),
           textYPP: int.parse(textYPP),
           textZLP: int.parse(textZLP));
-      isSubmit = data['success'];
-      if (isSubmit) {
+      if (widget.mode) {
         resText = "Submited by\n${data['person']} at\n${data['time']}";
       } else {
         resText = '';
@@ -378,8 +379,8 @@ class _CollationPartyState extends State<CollationParty> {
           textYPP: int.parse(textYPP),
           textZLP: int.parse(textZLP));
 
-      isSubmit = data['success'];
-      if (!isSubmit) {
+
+      if (widget.mode) {
         resText = "Canceled by\n${data['person']} at\n${data['time']}";
       } else {
         resText = '';
