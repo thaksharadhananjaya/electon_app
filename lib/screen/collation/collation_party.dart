@@ -103,9 +103,14 @@ class _CollationPartyState extends State<CollationParty> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          title: Text(widget.type == 0
-              ? 'Presidential Collation'
-              : (widget.type == 1 ? 'Senate Collation' : 'RepCollation')),
+        centerTitle: true,
+          title: Text(widget.mode
+              ? (widget.type == 0
+                  ? 'Presidential Collation'
+                  : (widget.type == 1 ? 'Senate Collation' : 'Rep Collation'))
+              : (widget.type == 0
+                  ? 'Presidential Cancel'
+                  : (widget.type == 1 ? 'Senate Cancel' : 'Rep Cancel'))),
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
@@ -215,17 +220,12 @@ class _CollationPartyState extends State<CollationParty> {
                 Padding(
                   padding: const EdgeInsets.only(
                       bottom: 10, left: 80, right: 80, top: 24),
-                  child: widget.mode
-                      ? CustomButton(
+                  child:CustomButton(
                           backgroundColor: Colors.green,
                           isLoading: isLoading,
                           label: 'Submit',
                           onPress: submit)
-                      : CustomButton(
-                          isLoading: isLoading,
-                          label: 'Cancel',
-                          backgroundColor: kPrimeryColor,
-                          onPress: buildDeleteBox),
+                     ,
                 ),
                 Text(
                   resText,
@@ -245,7 +245,7 @@ class _CollationPartyState extends State<CollationParty> {
 
   void submit() async {
     String textA = textAController.text;
-    String textAA = textAACController.text;
+    String textAA = textAAController.text;
     String textADP = textADPController.text;
     String textAPP = textAPPController.text;
     String textAAC = textAACController.text;
@@ -308,31 +308,50 @@ class _CollationPartyState extends State<CollationParty> {
           textSDP: int.parse(textSDP),
           textYPP: int.parse(textYPP),
           textZLP: int.parse(textZLP));
+      if (data['success']) {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.success,
+          headerAnimationLoop: false,
+          animType: AnimType.rightSlide,
+          title: 'Submitted',
+          desc: "Submited by\n${data['person']} at\n${data['time']}",
+          btnOkOnPress: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => Main(
+                          index: 2,
+                        ))));
+          },
+        ).show();
 
-      AwesomeDialog(
-        context: context,
-        dialogType: DialogType.success,
-        headerAnimationLoop: false,
-        animType: AnimType.rightSlide,
-        title: 'Submitted',
-        desc: "Submited by\n${data['person']} at\n${data['time']}",
-        btnOkOnPress: () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: ((context) => Main(
-                        index: 2,
-                      ))));
-        },
-      ).show();
-
-      const storage = FlutterSecureStorage();
-      if (widget.type == 0) {
-        await storage.write(key: 'presidential', value: '1');
-      } else if (widget.type == 1) {
-        await storage.write(key: 'senate', value: '1');
+        const storage = FlutterSecureStorage();
+        if (widget.type == 0) {
+          await storage.write(key: 'presidential', value: '1');
+        } else if (widget.type == 1) {
+          await storage.write(key: 'senate', value: '1');
+        } else {
+          await storage.write(key: 'rep', value: '1');
+        }
       } else {
-        await storage.write(key: 'rep', value: '1');
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          animType: AnimType.rightSlide,
+          headerAnimationLoop: false,
+          title: 'Unauthenticated',
+          desc: "You are not Authorized !",
+          btnOkOnPress: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => Main(
+                          index: 2,
+                        ))));
+            // nav.pop();
+          },
+        ).show();
       }
       /* if (widget.mode) {
         resText = "Submited by\n${data['person']} at\n${data['time']}";
@@ -370,138 +389,7 @@ class _CollationPartyState extends State<CollationParty> {
     }
   }
 
-  Future<dynamic> buildDeleteBox() {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) => ComfirmDailogBox(
-              onTap: cancelSubmit,
-            ));
-  }
 
-  void cancelSubmit() async {
-    setState(() {
-      isLoading = true;
-    });
-    Navigator.pop(context);
-    String textA = textAController.text;
-    String textAA = textAACController.text;
-    String textADP = textADPController.text;
-    String textAPP = textAPPController.text;
-    String textAAC = textAACController.text;
-    String textADC = textADCController.text;
-    String textAPC = textAPCController.text;
-    String textAPGA = textAPGAController.text;
-    String textAPM = textAPMController.text;
-    String textBP = textBPController.text;
-    String textLP = textLPController.text;
-    String textNRM = textNNPPController.text;
-    String textNNPP = textNNPPController.text;
-    String textPDP = textPDPController.text;
-    String textPRP = textPRPController.text;
-    String textSDP = textSDPController.text;
-    String textYPP = textYPPController.text;
-    String textZLP = textZLPController.text;
 
-    if (textA.isNotEmpty &&
-        textAA.isNotEmpty &&
-        textADP.isNotEmpty &&
-        textAPP.isNotEmpty &&
-        textAAC.isNotEmpty &&
-        textADC.isNotEmpty &&
-        textAPC.isNotEmpty &&
-        textAPGA.isNotEmpty &&
-        textAPM.isNotEmpty &&
-        textBP.isNotEmpty &&
-        textLP.isNotEmpty &&
-        textNRM.isNotEmpty &&
-        textNNPP.isNotEmpty &&
-        textPDP.isNotEmpty &&
-        textPRP.isNotEmpty &&
-        textSDP.isNotEmpty &&
-        textYPP.isNotEmpty &&
-        textZLP.isNotEmpty) {
-      var data = await Repo.cancelCollation(
-          type: widget.type,
-          reg: widget.registered,
-          accredited: widget.accredited,
-          rejected: widget.rejected,
-          textA: int.parse(textA),
-          textAA: int.parse(textAA),
-          textADP: int.parse(textADP),
-          textAPP: int.parse(textAPP),
-          textAAC: int.parse(textAAC),
-          textADC: int.parse(textADC),
-          textAPC: int.parse(textAPC),
-          textAPGA: int.parse(textAPGA),
-          textAPM: int.parse(textAPM),
-          textBP: int.parse(textBP),
-          textLP: int.parse(textLP),
-          textNRM: int.parse(textNRM),
-          textNNPP: int.parse(textNNPP),
-          textPDP: int.parse(textPDP),
-          textPRP: int.parse(textPRP),
-          textSDP: int.parse(textSDP),
-          textYPP: int.parse(textYPP),
-          textZLP: int.parse(textZLP));
-
-      AwesomeDialog(
-        context: context,
-        dialogType: DialogType.success,
-        animType: AnimType.rightSlide,
-        headerAnimationLoop: false,
-        title: 'Canceled',
-        desc: "Canceled by\n${data['person']} at\n${data['time']}",
-        btnOkOnPress: () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: ((context) => Main(
-                        index: 2,
-                      ))));
-          // nav.pop();
-        },
-      ).show();
-      const storage = FlutterSecureStorage();
-      if (widget.type == 0) {
-        await storage.write(key: 'presidential', value: '0');
-      } else if (widget.type == 1) {
-        await storage.write(key: 'senate', value: '0');
-      } else {
-        await storage.write(key: 'rep', value: '0');
-      }
-      /* i f (widget.mode) {
-        resText = "Canceled by\n${data['person']} at\n${data['time']}";
-      } else {
-        resText = '';
-        Flushbar(
-          messageText: const Text(
-            'Some thing went wrong!',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-          ),
-          //backgroundColor: kPrimeryColor,
-          duration: const Duration(seconds: 3),
-          icon: const Icon(
-            Icons.warning_rounded,
-            color: Colors.red,
-          ),
-        ).show(context);
-      } */
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      Flushbar(
-        messageText: const Text(
-          'All feilds are requied!',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-        ),
-        //backgroundColor: kPrimeryColor,
-        duration: const Duration(seconds: 3),
-        icon: const Icon(
-          Icons.warning_rounded,
-          color: Colors.red,
-        ),
-      ).show(context);
-    }
-  }
+  
 }

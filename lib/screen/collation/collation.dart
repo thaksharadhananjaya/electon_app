@@ -23,108 +23,76 @@ class Collation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
           elevation: 0,
-          title: Text(type == 0
-              ? 'Presidential Collation'
-              : (type == 1 ? 'Senate Collation' : 'RepCollation')),
+          title: Text(mode
+              ? (type == 0
+                  ? 'Presidential Collation'
+                  : (type == 1 ? 'Senate Collation' : 'Rep Collation'))
+              : (type == 0
+                  ? 'Presidential Cancel'
+                  : (type == 1 ? 'Senate Cancel' : 'Rep Cancel'))),
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           toolbarHeight: 40),
       body: SizedBox(
           width: double.maxFinite,
-          child: type == 0
-              ? FutureBuilder(
-                  future: getData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var data = snapshot.data['total'];
-                      textAccController.text =
-                          data['TOTAL_ACCREDITED_VOTERS'].toString();
-                      textRegController.text =
-                          data['TOTAL_REGISTERED_VOTERS'].toString();
-                      textRejectController.text =
-                          data['TOTAL_REJECTED_VOTES'].toString();
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ColationFeild(
-                              onSubmit: () {
-                                focusNodeAcc.requestFocus();
-                              },
-                              image: "vote.png",
-                              hint: 'Registered Votes',
-                              controller: textRegController),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          ColationFeild(
-                              onSubmit: () {
-                                focusNodeRej.requestFocus();
-                              },
-                              focusNode: focusNodeAcc,
-                              image: "vote_ac.png",
-                              hint: 'Accredited Votes',
-                              controller: textAccController),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          ColationFeild(
-                              onSubmit: () {},
-                              focusNode: focusNodeRej,
-                              image: "vote_rej.png",
-                              hint: 'Rejected Votes',
-                              controller: textRejectController),
-                          const SizedBox(
-                            height: 32,
-                          ),
-                          CustomButton(
-                              label: 'Next',
-                              onPress: () =>
-                                  next(context, snapshot.data['results']))
-                        ],
-                      );
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  })
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ColationFeild(
-                        onSubmit: () {
-                          focusNodeAcc.requestFocus();
-                        },
-                        image: "vote.png",
-                        hint: 'Registered Votes',
-                        controller: textRegController),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    ColationFeild(
-                        onSubmit: () {
-                          focusNodeRej.requestFocus();
-                        },
-                        focusNode: focusNodeAcc,
-                        image: "vote_ac.png",
-                        hint: 'Accredited Votes',
-                        controller: textAccController),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    ColationFeild(
-                        onSubmit: () {},
-                        focusNode: focusNodeRej,
-                        image: "vote_rej.png",
-                        hint: 'Rejected Votes',
-                        controller: textRejectController),
-                    const SizedBox(
-                      height: 32,
-                    ),
-                    CustomButton(
-                        label: 'Next', onPress: () => next(context, null))
-                  ],
-                )),
+          child: FutureBuilder(
+              future: getData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  var data = snapshot.data['total'];
+                  print(data);
+                  textAccController.text =
+                      data['TOTAL_ACCREDITED_VOTERS'].toString();
+                  textRegController.text =
+                      data['TOTAL_REGISTERED_VOTERS'].toString();
+                  textRejectController.text =
+                      data['TOTAL_REJECTED_VOTES'].toString();
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ColationFeild(
+                          onSubmit: () {
+                            focusNodeAcc.requestFocus();
+                          },
+                          image: "vote.png",
+                          hint: 'Registered Votes',
+                          controller: textRegController),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      ColationFeild(
+                          onSubmit: () {
+                            focusNodeRej.requestFocus();
+                          },
+                          focusNode: focusNodeAcc,
+                          image: "vote_ac.png",
+                          hint: 'Accredited Votes',
+                          controller: textAccController),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      ColationFeild(
+                          onSubmit: () {},
+                          focusNode: focusNodeRej,
+                          image: "vote_rej.png",
+                          hint: 'Rejected Votes',
+                          controller: textRejectController),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                      CustomButton(
+                          label: 'Next',
+                          onPress: () =>
+                              next(context, snapshot.data['results']))
+                    ],
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              })),
     );
   }
 
@@ -161,8 +129,10 @@ class Collation extends StatelessWidget {
   Future getData() async {
     const storage = FlutterSecureStorage();
     var user = json.decode(await storage.read(key: 'user'));
-
-    final response = await http.post(Uri.parse("$URL/mobile-getdata"),
+    final response = await http.post(
+        Uri.parse(type == 0
+            ? "$URL/mobile-getdata"
+            : (type == 1 ? "$URL/mobile-getdata-senate" : "$URL/mobile-getdata-rep")),
         body: json.encode(user),
         headers: {
           'accept': 'application/json',

@@ -34,7 +34,7 @@ class Repo {
           }),
           headers: headers);
       //print(response.headers);
-     // print(response.statusCode);
+      // print(response.statusCode);
       if (response.statusCode == 200) {
         DBHelper dbHelper = DBHelper();
         dbHelper.deleteDataOffline();
@@ -100,18 +100,22 @@ class Repo {
               'ZLP': textZLP,
               'Total_Accredited_voters': accredited,
               'Total_Registered_voters': reg,
-              'Total_Rejected_votes': reg
+              'Total_Rejected_votes': rejected,
             }
           }),
           headers: headers);
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        print(data[0]);
+
         return {
           'success': true,
           'person': data['person_collated'],
           'time': data['time']
+        };
+      } else {
+        return {
+          'success': false,
         };
       }
     } catch (e) {
@@ -120,29 +124,9 @@ class Repo {
     return {'success': false};
   }
 
-  static Future cancelCollation(
-      {int reg,
-      int type,
-      int accredited,
-      int rejected,
-      int textA,
-      int textAA,
-      int textADP,
-      int textAPP,
-      int textAAC,
-      int textADC,
-      int textAPC,
-      int textAPGA,
-      int textAPM,
-      int textBP,
-      int textLP,
-      int textNRM,
-      int textNNPP,
-      int textPDP,
-      int textPRP,
-      int textSDP,
-      int textYPP,
-      int textZLP}) async {
+  static Future cancelCollation({
+    int type,
+  }) async {
     const storage = FlutterSecureStorage();
     var user = json.decode(await storage.read(key: 'user'));
 
@@ -153,32 +137,7 @@ class Repo {
               : (type == 1
                   ? "$URL/mobile-cancel-senate"
                   : "$URL/mobile-cancel-rep")),
-          body: json.encode({
-            "user": user,
-            "userdata_collate": {
-              'A': textA,
-              'AA': textAA,
-              'AAC': textAAC,
-              'ADC': textADC,
-              'ADP': textADP,
-              'APC': textAPC,
-              'APGA': textAPGA,
-              'APM': textAPM,
-              'APP': textAPP,
-              'BP': textBP,
-              'LP': textLP,
-              'NNPP': textNNPP,
-              'NRM': textNRM,
-              'PDP': textPDP,
-              'PRP': textPRP,
-              'SDP': textSDP,
-              'YPP': textYPP,
-              'ZLP': textZLP,
-              'Total_Accredited_voters': accredited,
-              'Total_Registered_voters': reg,
-              'Total_Rejected_votes': reg
-            }
-          }),
+          body: json.encode({"user": user, "userdata_collate": {}}),
           headers: headers);
       //print(response.headers);
       print(response.statusCode);
@@ -186,14 +145,19 @@ class Repo {
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         return {
-          'success': false,
+          'success': true,
           'person': data['person_collated'],
           'time': data['time']
         };
+      } else {
+        return {
+          'success': false,
+        };
       }
     } catch (e) {
-      debugPrint(e);
+      return {
+        'success': false,
+      };
     }
-    return true;
   }
 }
