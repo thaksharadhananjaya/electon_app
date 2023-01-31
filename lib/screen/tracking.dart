@@ -70,7 +70,10 @@ class _TrackingState extends State<Tracking> {
                 buildCameraButton(),
                 CustomTextBox(
                     label: 'Remarks', controller: textEditingControllerRemark),
-                CustomButton(label: 'Upload', backgroundColor: Colors.green, onPress: submit),
+                CustomButton(
+                    label: 'Upload',
+                    backgroundColor: Colors.green,
+                    onPress: submit),
                 const SizedBox(
                   height: 96,
                 )
@@ -213,7 +216,6 @@ class _TrackingState extends State<Tracking> {
       //Navigator.pop(context);
     } else if (video != null) {
       await upload(video, "videos/$time.mp4", 1);
-
     } else {
       Flushbar(
         message: 'Please capture photo or video !',
@@ -264,7 +266,7 @@ class _TrackingState extends State<Tracking> {
           type: type,
           lat: position.latitude,
           long: position.longitude);
-          
+
       await Repo.addData(
           remark: textEditingControllerRemark.text,
           file: data.key,
@@ -273,19 +275,17 @@ class _TrackingState extends State<Tracking> {
           long: position.longitude);
 
       try {
-         setState(() {
-          textEditingControllerRemark.clear();
-          photo = null;
-        });
-    print("ggggg");
-        //controller.dispose();
+        controller.dispose();
         controller = null;
-       
       } catch (e) {
         if (kDebugMode) {
           print("error $e");
         }
       }
+      setState(() {
+        textEditingControllerRemark.clear();
+        photo = null;
+      });
     } on StorageException catch (e) {
       Flushbar(
         message: e.message,
@@ -350,12 +350,11 @@ class _TrackingState extends State<Tracking> {
     }
   }
 
-  void clear(){
+  void clear() {
     setState(() {
       textEditingControllerRemark.clear();
-    photo=null;
-    video=null;
+      photo = null;
+      video = null;
     });
-    
   }
 }

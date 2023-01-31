@@ -34,7 +34,7 @@ class Repo {
           }),
           headers: headers);
       //print(response.headers);
-      print(response.statusCode);
+     // print(response.statusCode);
       if (response.statusCode == 200) {
         DBHelper dbHelper = DBHelper();
         dbHelper.deleteDataOffline();
@@ -46,6 +46,7 @@ class Repo {
 
   static Future addCollation(
       {int reg,
+      int type,
       int accredited,
       int rejected,
       int textA,
@@ -70,7 +71,12 @@ class Repo {
     var user = json.decode(await storage.read(key: 'user'));
 
     try {
-      final response = await http.post(Uri.parse("$URL/mobile_submit"),
+      final response = await http.post(
+          Uri.parse(type == 0
+              ? "$URL/mobile_submit"
+              : (type == 1
+                  ? "$URL/mobile_submit-senate"
+                  : "$URL/mobile_submit-rep")),
           body: json.encode({
             "user": user,
             "userdata_collate": {
@@ -101,6 +107,7 @@ class Repo {
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
+        print(data[0]);
         return {
           'success': true,
           'person': data['person_collated'],
@@ -108,13 +115,14 @@ class Repo {
         };
       }
     } catch (e) {
-      debugPrint(e);
+      //debugPrint(e.toString());
     }
     return {'success': false};
   }
 
   static Future cancelCollation(
       {int reg,
+      int type,
       int accredited,
       int rejected,
       int textA,
@@ -139,7 +147,12 @@ class Repo {
     var user = json.decode(await storage.read(key: 'user'));
 
     try {
-      final response = await http.post(Uri.parse("$URL/mobile-cancel"),
+      final response = await http.post(
+          Uri.parse(type == 0
+              ? "$URL/mobile-cancel"
+              : (type == 1
+                  ? "$URL/mobile-cancel-senate"
+                  : "$URL/mobile-cancel-rep")),
           body: json.encode({
             "user": user,
             "userdata_collate": {

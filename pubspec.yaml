@@ -51,6 +51,7 @@ dependencies:
   sqflite: ^2.0.3
   google_fonts: ^3.0.1
   modal_bottom_sheet: ^2.1.2
+  awesome_dialog: ^3.0.2
   #intl_phone_number_input: ^0.7.0+2
   awesome_bottom_navigation: ^0.0.4
   flutter_secure_storage: ^7.0.1

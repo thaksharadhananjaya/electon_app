@@ -10,7 +10,6 @@ import 'package:election_app/components/button.dart';
 import 'package:election_app/db/db_helper.dart';
 import 'package:election_app/repo/repo.dart';
 import 'package:election_app/screen/collation/col_home.dart';
-import 'package:election_app/screen/collation/collation.dart';
 import 'package:election_app/screen/home.dart';
 import 'package:election_app/screen/profile/profile.dart';
 import 'package:election_app/screen/signin.dart';
@@ -98,7 +97,7 @@ class MyApp extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data) {
-                          return const Main();
+                          return Main();
                         } else {
                           return const SignIn();
                         }
@@ -132,7 +131,8 @@ class MyApp extends StatelessWidget {
 }
 
 class Main extends StatefulWidget {
-  const Main({Key key}) : super(key: key);
+  int index;
+  Main({Key key, this.index = 0}) : super(key: key);
 
   @override
   State<Main> createState() => _MainState();
@@ -140,9 +140,17 @@ class Main extends StatefulWidget {
 
 class _MainState extends State<Main> {
   int currentPage = 0;
-  List pages = [const Home(), const Tracking(), const ColHome()];
+  List pages = [const Home(), const Tracking(), ColHome()];
   List pagesName = ['Home', 'Tracking', 'Collation'];
   String avatarLink = '', name = '';
+
+  @override
+  void initState() {
+    super.initState();
+    currentPage = widget.index;
+    getAvatar();
+  }
+
   void getAvatar() async {
     const storage = FlutterSecureStorage();
     var user = json.decode(await storage.read(key: 'user'))['user'];
@@ -150,12 +158,6 @@ class _MainState extends State<Main> {
       avatarLink = user['avatar'];
       name = user['username'];
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getAvatar();
   }
 
   @override
@@ -172,26 +174,27 @@ class _MainState extends State<Main> {
         drawer: buildDrawer(),
         body: pages[currentPage],
         bottomNavigationBar: AwesomeBottomNav(
-          icons: const [
-            Icons.home_outlined,
-            Icons.camera_alt_outlined,
-            Icons.how_to_vote,
-          ],
-          highlightedIcons: const [
-            Icons.home,
-            Icons.camera_alt,
-            Icons.how_to_vote_outlined,
-          ],
-          onTapped: (int value) {
-            setState(() {
-              currentPage = value;
-            });
-          },
-          bodyBgColor: Colors.transparent,
-          highlightColor: kPrimeryColor,
-          navFgColor: Colors.grey.withOpacity(0.5),
-          navBgColor: Colors.white,
-        ));
+            icons: const [
+              Icons.home_outlined,
+              Icons.camera_alt_outlined,
+              Icons.how_to_vote,
+            ],
+            highlightedIcons: const [
+              Icons.home,
+              Icons.camera_alt,
+              Icons.how_to_vote_outlined,
+            ],
+            onTapped: (int value) {
+              setState(() {
+                currentPage = value;
+              });
+            },
+            bodyBgColor: Colors.transparent,
+            highlightColor: kPrimeryColor,
+            navFgColor: Colors.grey.withOpacity(0.5),
+            navBgColor: Colors.white,
+            //index: 2
+            ));
   }
 
   Drawer buildDrawer() {

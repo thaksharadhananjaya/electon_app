@@ -1,20 +1,30 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:another_flushbar/flushbar.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:election_app/components/button.dart';
 import 'package:election_app/components/collation_row.dart';
 import 'package:election_app/config.dart';
+import 'package:election_app/main.dart';
 import 'package:election_app/repo/repo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../components/customDailog.dart';
 
 class CollationParty extends StatefulWidget {
-  final int registered, accredited, rejected;
+  final int registered, accredited, rejected, type;
   final bool mode;
-  CollationParty(
-      {Key key, this.registered, this.accredited, this.rejected, this.mode})
+  final data;
+  const CollationParty(
+      {Key key,
+      this.registered,
+      this.accredited,
+      this.rejected,
+      this.mode,
+      this.type,
+      this.data})
       : super(key: key);
 
   @override
@@ -60,147 +70,174 @@ class _CollationPartyState extends State<CollationParty> {
 
   bool isLoading = false;
   String resText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.type == 0) fillTextFeilds();
+  }
+
+  void fillTextFeilds() {
+    textAController.text = widget.data['A'].toString();
+    textAACController.text = widget.data['AAC'].toString();
+    textADCController.text = widget.data['ADC'].toString();
+    textADPController.text = widget.data['ADP'].toString();
+    textAPCController.text = widget.data['APC'].toString();
+    textAPGAController.text = widget.data['APGA'].toString();
+    textAPMController.text = widget.data['APM'].toString();
+    textAPPController.text = widget.data['APP'].toString();
+    textBPController.text = widget.data['BP'].toString();
+    textLPController.text = widget.data['LP'].toString();
+    textNNPPController.text = widget.data['NNPP'].toString();
+    textPDPController.text = widget.data['PDP'].toString();
+    textPRPController.text = widget.data['PRP'].toString();
+    textSDPController.text = widget.data['SDP'].toString();
+    textYPPController.text = widget.data['YPP'].toString();
+    textAAController.text = widget.data['AA'].toString();
+    textZLPController.text = widget.data['ZLP'].toString();
+    textNRMontroller.text = widget.data['NRM'].toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+          title: Text(widget.type == 0
+              ? 'Presidential Collation'
+              : (widget.type == 1 ? 'Senate Collation' : 'RepCollation')),
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           toolbarHeight: 40),
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 24,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.87,
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                Text('Party',
-                    style: GoogleFonts.montserrat(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 20),
-                    )),
-                Padding(
-                  padding: const EdgeInsets.only(right: 50),
-                  child: Text('Score',
-                      style: GoogleFonts.montserrat(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 20),
-                      )),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.78,
-              child: SingleChildScrollView(
-                child: Column(
+                const SizedBox(
+                  height: 24,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    CollationRow(
-                      label: 'A',
-                      textController: textAController,
-                    ),
-                    CollationRow(
-                      label: 'AA',
-                      textController: textAAController,
-                    ),
-                    CollationRow(
-                      label: 'ADP',
-                      textController: textADPController,
-                    ),
-                    CollationRow(
-                      label: 'APP',
-                      textController: textAPPController,
-                    ),
-                    CollationRow(
-                      label: 'AAC',
-                      textController: textAACController,
-                    ),
-                    CollationRow(
-                      label: 'ADC',
-                      textController: textADCController,
-                    ),
-                    CollationRow(
-                      label: 'APC',
-                      textController: textAPCController,
-                    ),
-                    CollationRow(
-                      label: 'APGA',
-                      textController: textAPGAController,
-                    ),
-                    CollationRow(
-                      label: 'APM',
-                      textController: textAPMController,
-                    ),
-                    CollationRow(
-                      label: 'BP',
-                      textController: textBPController,
-                    ),
-                    CollationRow(
-                      label: 'LP',
-                      textController: textLPController,
-                    ),
-                    CollationRow(
-                      label: 'NRM',
-                      textController: textNRMontroller,
-                    ),
-                    CollationRow(
-                      label: 'NNPP',
-                      textController: textNNPPController,
-                    ),
-                    CollationRow(
-                      label: 'PDP',
-                      textController: textPDPController,
-                    ),
-                    CollationRow(
-                      label: 'PRP',
-                      textController: textPRPController,
-                    ),
-                    CollationRow(
-                      label: 'SDP',
-                      textController: textSDPController,
-                    ),
-                    CollationRow(
-                      label: 'YPP',
-                      textController: textYPPController,
-                    ),
-                    CollationRow(
-                      label: 'ZLP',
-                      textController: textZLPController,
-                    ),
+                    Text('Party',
+                        style: GoogleFonts.montserrat(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 20),
+                        )),
                     Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 10, left: 80, right: 80, top: 24),
-                      child: widget.mode
-                          ? CustomButton(
-                              backgroundColor: Colors.green,
-                              isLoading: isLoading,
-                              label: 'Submit',
-                              onPress: submit)
-                          : CustomButton(
-                              isLoading: isLoading,
-                              label: 'Cancel',
-                              backgroundColor: kPrimeryColor,
-                              onPress: buildDeleteBox),
-                    ),
-                    Text(
-                      resText,
-                      style: TextStyle(
-                          color: widget.mode ? Colors.green : kPrimeryColor),
-                    ),
-                    const SizedBox(
-                      height: 32,
+                      padding: const EdgeInsets.only(right: 50),
+                      child: Text('Score',
+                          style: GoogleFonts.montserrat(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 20),
+                          )),
                     )
                   ],
                 ),
-              ),
+                const SizedBox(
+                  height: 24,
+                ),
+                CollationRow(
+                  label: 'A',
+                  textController: textAController,
+                ),
+                CollationRow(
+                  label: 'AA',
+                  textController: textAAController,
+                ),
+                CollationRow(
+                  label: 'ADP',
+                  textController: textADPController,
+                ),
+                CollationRow(
+                  label: 'APP',
+                  textController: textAPPController,
+                ),
+                CollationRow(
+                  label: 'AAC',
+                  textController: textAACController,
+                ),
+                CollationRow(
+                  label: 'ADC',
+                  textController: textADCController,
+                ),
+                CollationRow(
+                  label: 'APC',
+                  textController: textAPCController,
+                ),
+                CollationRow(
+                  label: 'APGA',
+                  textController: textAPGAController,
+                ),
+                CollationRow(
+                  label: 'APM',
+                  textController: textAPMController,
+                ),
+                CollationRow(
+                  label: 'BP',
+                  textController: textBPController,
+                ),
+                CollationRow(
+                  label: 'LP',
+                  textController: textLPController,
+                ),
+                CollationRow(
+                  label: 'NRM',
+                  textController: textNRMontroller,
+                ),
+                CollationRow(
+                  label: 'NNPP',
+                  textController: textNNPPController,
+                ),
+                CollationRow(
+                  label: 'PDP',
+                  textController: textPDPController,
+                ),
+                CollationRow(
+                  label: 'PRP',
+                  textController: textPRPController,
+                ),
+                CollationRow(
+                  label: 'SDP',
+                  textController: textSDPController,
+                ),
+                CollationRow(
+                  label: 'YPP',
+                  textController: textYPPController,
+                ),
+                CollationRow(
+                  label: 'ZLP',
+                  textController: textZLPController,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 10, left: 80, right: 80, top: 24),
+                  child: widget.mode
+                      ? CustomButton(
+                          backgroundColor: Colors.green,
+                          isLoading: isLoading,
+                          label: 'Submit',
+                          onPress: submit)
+                      : CustomButton(
+                          isLoading: isLoading,
+                          label: 'Cancel',
+                          backgroundColor: kPrimeryColor,
+                          onPress: buildDeleteBox),
+                ),
+                Text(
+                  resText,
+                  style: TextStyle(
+                      color: widget.mode ? Colors.green : kPrimeryColor),
+                ),
+                const SizedBox(
+                  height: 32,
+                )
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -249,6 +286,7 @@ class _CollationPartyState extends State<CollationParty> {
       });
 
       var data = await Repo.addCollation(
+          type: widget.type,
           reg: widget.registered,
           accredited: widget.accredited,
           rejected: widget.rejected,
@@ -270,7 +308,33 @@ class _CollationPartyState extends State<CollationParty> {
           textSDP: int.parse(textSDP),
           textYPP: int.parse(textYPP),
           textZLP: int.parse(textZLP));
-      if (widget.mode) {
+
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        headerAnimationLoop: false,
+        animType: AnimType.rightSlide,
+        title: 'Submitted',
+        desc: "Submited by\n${data['person']} at\n${data['time']}",
+        btnOkOnPress: () {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => Main(
+                        index: 2,
+                      ))));
+        },
+      ).show();
+
+      const storage = FlutterSecureStorage();
+      if (widget.type == 0) {
+        await storage.write(key: 'presidential', value: '1');
+      } else if (widget.type == 1) {
+        await storage.write(key: 'senate', value: '1');
+      } else {
+        await storage.write(key: 'rep', value: '1');
+      }
+      /* if (widget.mode) {
         resText = "Submited by\n${data['person']} at\n${data['time']}";
       } else {
         resText = '';
@@ -286,7 +350,7 @@ class _CollationPartyState extends State<CollationParty> {
             color: Colors.red,
           ),
         ).show(context);
-      }
+      } */
       setState(() {
         isLoading = false;
       });
@@ -310,7 +374,7 @@ class _CollationPartyState extends State<CollationParty> {
     return showDialog(
         context: context,
         builder: (BuildContext context) => ComfirmDailogBox(
-              onTap: submit,
+              onTap: cancelSubmit,
             ));
   }
 
@@ -318,7 +382,7 @@ class _CollationPartyState extends State<CollationParty> {
     setState(() {
       isLoading = true;
     });
-
+    Navigator.pop(context);
     String textA = textAController.text;
     String textAA = textAACController.text;
     String textADP = textADPController.text;
@@ -357,6 +421,7 @@ class _CollationPartyState extends State<CollationParty> {
         textYPP.isNotEmpty &&
         textZLP.isNotEmpty) {
       var data = await Repo.cancelCollation(
+          type: widget.type,
           reg: widget.registered,
           accredited: widget.accredited,
           rejected: widget.rejected,
@@ -379,8 +444,32 @@ class _CollationPartyState extends State<CollationParty> {
           textYPP: int.parse(textYPP),
           textZLP: int.parse(textZLP));
 
-
-      if (widget.mode) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.rightSlide,
+        headerAnimationLoop: false,
+        title: 'Canceled',
+        desc: "Canceled by\n${data['person']} at\n${data['time']}",
+        btnOkOnPress: () {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => Main(
+                        index: 2,
+                      ))));
+          // nav.pop();
+        },
+      ).show();
+      const storage = FlutterSecureStorage();
+      if (widget.type == 0) {
+        await storage.write(key: 'presidential', value: '0');
+      } else if (widget.type == 1) {
+        await storage.write(key: 'senate', value: '0');
+      } else {
+        await storage.write(key: 'rep', value: '0');
+      }
+      /* i f (widget.mode) {
         resText = "Canceled by\n${data['person']} at\n${data['time']}";
       } else {
         resText = '';
@@ -396,7 +485,7 @@ class _CollationPartyState extends State<CollationParty> {
             color: Colors.red,
           ),
         ).show(context);
-      }
+      } */
       setState(() {
         isLoading = false;
       });
