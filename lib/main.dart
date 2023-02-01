@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
-        title: 'Election',
+        title: 'NNPP 2023',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: buildMaterialColor(kPrimeryColor),

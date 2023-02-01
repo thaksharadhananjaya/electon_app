@@ -25,13 +25,10 @@ class Collation extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
           elevation: 0,
-          title: Text(mode
-              ? (type == 0
+          title: Text(type == 0
                   ? 'Presidential Collation'
-                  : (type == 1 ? 'Senate Collation' : 'Rep Collation'))
-              : (type == 0
-                  ? 'Presidential Cancel'
-                  : (type == 1 ? 'Senate Cancel' : 'Rep Cancel'))),
+                  : (type == 1 ? 'Senate Collation' : 'Rep Collation')
+              ),
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           toolbarHeight: 40),

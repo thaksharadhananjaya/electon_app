@@ -11,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../components/customDailog.dart';
-
 class CollationParty extends StatefulWidget {
   final int registered, accredited, rejected, type;
   final bool mode;
@@ -74,10 +72,12 @@ class _CollationPartyState extends State<CollationParty> {
   @override
   void initState() {
     super.initState();
-    if (widget.type == 0) fillTextFeilds();
+    fillTextFeilds();
+    
   }
 
-  void fillTextFeilds() {
+  void fillTextFeilds() 
+  {
     textAController.text = widget.data['A'].toString();
     textAACController.text = widget.data['AAC'].toString();
     textADCController.text = widget.data['ADC'].toString();
@@ -104,13 +104,10 @@ class _CollationPartyState extends State<CollationParty> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-          title: Text(widget.mode
-              ? (widget.type == 0
+          title: Text( widget.type == 0
                   ? 'Presidential Collation'
-                  : (widget.type == 1 ? 'Senate Collation' : 'Rep Collation'))
-              : (widget.type == 0
-                  ? 'Presidential Cancel'
-                  : (widget.type == 1 ? 'Senate Cancel' : 'Rep Cancel'))),
+                  : (widget.type == 1 ? 'Senate Collation' : 'Rep Collation')
+             ),
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
@@ -255,7 +252,7 @@ class _CollationPartyState extends State<CollationParty> {
     String textAPM = textAPMController.text;
     String textBP = textBPController.text;
     String textLP = textLPController.text;
-    String textNRM = textNNPPController.text;
+    String textNRM = textNRMontroller.text;
     String textNNPP = textNNPPController.text;
     String textPDP = textPDPController.text;
     String textPRP = textPRPController.text;

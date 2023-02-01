@@ -285,6 +285,7 @@ class _TrackingState extends State<Tracking> {
       setState(() {
         textEditingControllerRemark.clear();
         photo = null;
+        video=null;
       });
     } on StorageException catch (e) {
       Flushbar(
